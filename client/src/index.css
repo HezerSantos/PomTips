@@ -126,8 +126,37 @@ button{
     }
   }
 
+  & > a:last-child{
+    display: none;
+  }
+
 }
 
 .navigation-link-selected {
   background: rgba(0, 0, 0, 0.5); 
+}
+
+@media (max-width: 850px) {
+  .navigation{ 
+    grid-template-columns: 1fr;
+
+    & > a, .navigation-logo {
+      display: none;
+    }
+  }
+
+  .navigation-links {
+    padding-inline: .8rem;
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: calc(100% / 4);
+    & > a {
+      padding-inline: .5rem;
+      text-align: center;
+    }
+    & > a:last-child{
+      display: block;
+    }
+  }
 }

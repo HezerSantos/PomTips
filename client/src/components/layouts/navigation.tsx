@@ -28,6 +28,9 @@ const NavigationLinks: React.FC = () => {
             <Link to={""}>
                 Services
             </Link>
+            <Link to={""}>
+                Book
+            </Link>
         </div>
     )
 }
