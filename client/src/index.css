@@ -1,0 +1,29 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+#root{
+  overflow: hidden;
+  position: relative;
+}
+
+
+button{
+  cursor: pointer;
+  &:active{
+    opacity: 50%;
+  }
+}
+
+.page-section{
+  position: relative;
+  min-width: 20rem;
+  display: flex;
+  justify-content: center;
+}
+
+.page-section__child{
+  width: 100%;
+  max-width: 120rem;
+}

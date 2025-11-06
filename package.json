@@ -1,0 +1,17 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "fix": "find .git/objects/ -type f -empty | xargs rm; git fetch -p; git fsck --full",
+    "dev": "concurrently -k --names server,client --prefix-colors blue,magenta --timestamp-format \"[HH:mm:ss]\" \"npm run dev --prefix ./server\" \"npm run dev --prefix ./client\""  
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
