@@ -6,7 +6,8 @@
   "scripts": {
     "fix": "find .git/objects/ -type f -empty | xargs rm; git fetch -p; git fsck --full",
     "dev": "concurrently -k --names server,client --prefix-colors blue,magenta --timestamp-format \"[HH:mm:ss]\" \"npm run dev --prefix ./server\" \"npm run dev --prefix ./client\"",  
-    "install": "npm install --prefix ./server && npm install --prefix ./client"
+    "setup": "npm install && npm install --prefix ./server && npm install --prefix ./client",
+    "audit": "npm audit fix && npm audit fix --prefix ./server && npm audit fix --prefix ./client"
   },
   "keywords": [],
   "author": "",
