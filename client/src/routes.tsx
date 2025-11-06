@@ -1,5 +1,6 @@
 import App from "./App";
 import Error404 from "./pages/errors/error404";
+import Home from "./pages/home/home";
 const routes = [
     {
         path: "/",
@@ -8,7 +9,7 @@ const routes = [
         children: [
             {
                 index: true,
-                element: <></>
+                element: <Home />
             },
         ]
     }

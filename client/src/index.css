@@ -2,12 +2,20 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: var(--f-main);
 }
 #root{
   overflow: hidden;
   position: relative;
 }
 
+body{
+  background-color: var(--body-primary);
+}
+
+a{
+  text-decoration: none;
+}
 
 button{
   cursor: pointer;
@@ -26,4 +34,100 @@ button{
 .page-section__child{
   width: 100%;
   max-width: 120rem;
+}
+
+:root {
+  --f-main: "Outfit", sans-serif;
+  --f-secondary: "Playfair Display", serif;
+  --body-primary: #FFFFFA;
+  --loading: rgb(175, 175, 175);
+  --background-primary: #F6BABB;
+  --background-primary-offset: #f79697;
+  --background-secondary: #EEF6F8;
+
+  --text-color-primary: #000000;
+  --text-color-secondary: #FFFFFF;
+  --text-color--highlight: #F6BABB;
+  --text-color-offset: #6C181A;
+}
+
+.page-logo{
+  width: 4rem;
+  height: 4rem;
+}
+
+.navigation{
+  position: fixed;
+  z-index: 2;
+  height: 5rem;
+  padding-inline: clamp(1rem, 5%, 10rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  & * {
+    align-self: center;
+  }
+
+  & > a {
+    width: max-content;
+    justify-self: self-end;
+    background-color: var(--background-primary);
+    color: white;
+    padding: .8rem 1rem;
+    border-radius: .5rem;
+
+    &:hover {
+      background-color: var(--background-primary-offset);
+    }
+  }
+}
+
+.navigation-logo{
+  & > a{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    & > p{
+      color: var(--text-color-secondary);
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.navigation-links {
+  position: relative;
+  justify-self: center;
+  padding: .5rem 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  & * {
+    color: var(--text-color-secondary);
+    position: relative;
+    z-index: 1;
+  }
+
+  &::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.10); 
+    backdrop-filter: blur(10px);           
+    -webkit-backdrop-filter: blur(10px); 
+    border-radius: .8rem;
+  }
+
+  & > a {
+    padding: .5rem 2rem;
+    border-radius: .5rem;
+    &:hover{
+      background: rgba(0, 0, 0, 0.5); 
+    }
+  }
+
+}
+
+.navigation-link-selected {
+  background: rgba(0, 0, 0, 0.5); 
 }
