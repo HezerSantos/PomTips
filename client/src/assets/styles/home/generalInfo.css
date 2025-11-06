@@ -1,4 +1,5 @@
 .general-info{
+    padding-block: 4rem 5rem;
     padding-inline: clamp(1rem, 5%, 3rem);
     display: flex;
     justify-content: space-between;

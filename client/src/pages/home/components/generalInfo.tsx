@@ -42,16 +42,16 @@ const GeneralInfo: React.FC = () => {
         <>
             <section className="page-section">
                 <div className="page-section__child general-info">
-                                            {generalInfoInformation.map(({icon, header, text}, index) => {
-                            return (
-                                <GeneralInfoCard 
-                                    icon={icon}
-                                    header={header}
-                                    text={text}
-                                    key={index}
-                                />
-                            )
-                        })}
+                    {generalInfoInformation.map(({icon, header, text}, index) => {
+                        return (
+                            <GeneralInfoCard 
+                                icon={icon}
+                                header={header}
+                                text={text}
+                                key={index}
+                            />
+                        )
+                    })}
                 </div>
             </section>
         </>
