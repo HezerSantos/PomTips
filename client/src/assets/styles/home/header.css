@@ -1,7 +1,7 @@
 .home-header{
     min-height: 45rem;
-    background: url('../../images/homeHeader.jpg');
-    background-position: center;
+    background: url('../../images/headerImage.png');
+    background-position: 73% 100%;
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
@@ -17,17 +17,11 @@
         color: white;
     }
     
-    &::after{
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-color: black;
-        opacity: 15%;
-    }
 
     & > h1{
         font-family: var(--f-secondary);
         font-size: 4rem;
+        color: white;
     }
 
     & > div {
@@ -35,6 +29,7 @@
         gap: 5rem;
 
         & > a {
+            position: relative;
             background-color: var(--background-primary);
             padding: 1rem 1.5rem;
             border-radius: .8rem;
@@ -49,7 +44,10 @@
 @media (max-width: 850px) {
     .home-header {
         align-items: center;
-
+        background: url('../../images/headerImageDark.png');
+        background-position: 73% 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
         & > h1 {
             text-align: center;
             font-size: 3rem;
@@ -62,8 +60,21 @@
         & > div {
             flex-direction: column;
             gap: 1rem;
-            width: 50%;
+            width: 70%;
             text-align: center;
+
+            & > a{
+                background-color: transparent;
+                &::after{
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: rgba(255, 255, 255, 0.10); 
+                    backdrop-filter: blur(10px);           
+                    -webkit-backdrop-filter: blur(10px); 
+                    border-radius: .8rem;
+                }
+            }
         }
     }
 }

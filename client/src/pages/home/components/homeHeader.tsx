@@ -7,11 +7,11 @@ const HomeHeader: React.FC = () => {
                     <h1>
                         Refined Nails.
                         <br />
-                        Pom-Level Pawfection
+                        Flawless Finish.
                     </h1>
                     <div>
-                        <Link to={"/"}>View More</Link>
-                        <Link to={""}>Book Now</Link>
+                        <Link to={"/"}><p>View More</p></Link>
+                        <Link to={""}><p>Book Now</p></Link>
                     </div>
                 </section>
             </header>
