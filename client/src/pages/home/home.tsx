@@ -5,6 +5,7 @@ import ReviewInfo from "./components/reviewInfo"
 import NailView from "./components/nailView"
 import GeneralInfo from "./components/generalInfo"
 import Reviews from "./components/reviews"
+import Footer from "../../components/layouts/footer"
 const Home: React.FC = () => {
     return(
         <>
@@ -16,6 +17,7 @@ const Home: React.FC = () => {
                 <GeneralInfo />
                 <Reviews />
             </main>
+            <Footer />
         </>
     )
 }

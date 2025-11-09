@@ -163,3 +163,53 @@ button{
     }
   }
 }
+
+.footer{
+  background: linear-gradient(to right, var(--background-primary) 0%, var(--text-color-offset) 100%);
+  min-height: 15rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding-inline: clamp(2rem, 5vw, 5rem);
+
+  & > div{
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    & > ul{
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      & > li > a{
+        color: var(--text-color-secondary);
+      }
+    }
+  }
+}
+
+.footer-content{
+  & > p{
+    color: var(--text-color-secondary);
+    font-size: 1.5rem;
+  }
+}
+
+.footer-header{
+  &> img{
+    width: 3rem;
+    height: 3rem;
+  }
+
+  & > p{
+    color: var(--text-color-secondary);
+  }
+}
+
+@media (max-width: 650px){
+  .footer{
+    grid-template-columns: none;
+
+  }
+}
