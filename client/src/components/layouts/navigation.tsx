@@ -25,10 +25,10 @@ const NavigationLinks: React.FC = () => {
             <Link to={""}>
                 About
             </Link>
-            <Link to={""}>
+            <Link to={"/services"}>
                 Services
             </Link>
-            <Link to={""}>
+            <Link to={"/book"}>
                 Book
             </Link>
         </div>
@@ -42,7 +42,7 @@ const Navigation: React.FC = () => {
                 <div className="page-section__child navigation">
                     <Logo />
                     <NavigationLinks />
-                    <Link to={""}>Book Now</Link>
+                    <Link to={"/book"}>Book Now</Link>
                 </div>
             </nav>
         </>

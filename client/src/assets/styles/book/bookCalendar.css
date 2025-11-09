@@ -1,0 +1,40 @@
+.book-calendar{
+    position: relative;
+    z-index: 2;
+    width: clamp(18rem, 50%, 25rem);
+}
+
+.calendar-header{
+    padding-inline: 1rem;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 2px transparent white;
+    & > *{
+        align-self: center;
+        justify-self: center;
+        color: var(--text-color-secondary);
+    }
+}
+
+.calendar-content{
+    border: 2px solid white;
+    border-radius: 1rem;
+    padding-inline: calc(1rem - 2px);
+    padding-block: 1rem;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 1rem;
+    & > *{
+        justify-self: center;
+        align-self: center;
+    }
+
+    & > button{
+        background-color: transparent;
+        height: 1.5rem;
+        width: 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid white;
+        color: var(--text-color-secondary);
+    }
+}

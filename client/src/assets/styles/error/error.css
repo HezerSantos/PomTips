@@ -14,7 +14,7 @@
   }
 
   & > p{
-    font-family: var(--f-secondary);
+    font-family: var(--f-main);
   }
 
   & > button{
