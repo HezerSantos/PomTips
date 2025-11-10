@@ -19,7 +19,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
 
-    & > div > input{
+    & > div > input, & > div > select{
         font-size: 1rem;
         padding: .35rem;
         background-color: transparent;
@@ -28,7 +28,26 @@
         border: 1px solid white;
         outline: none;
     }
+
+    & option{
+        color: var(--text-color-primary);
+    }
 }
+
+
+.book-input{
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+
+    & > label{
+        color: var(--text-color-secondary);
+        font-size: 1.2rem;
+    }
+}
+
 
 .book-form-footer{
     width: 100%;
@@ -45,5 +64,17 @@
     & > p{
         align-self: flex-end;
         color: var(--text-color-secondary);
+    }
+}
+@media (max-width: 600px){
+    .book-form-inputs{
+        grid-template-columns: 1fr;
+    }
+    .book-form-footer{
+        flex-direction: column;
+
+        & > p{
+            align-self: flex-start;
+        }
     }
 }

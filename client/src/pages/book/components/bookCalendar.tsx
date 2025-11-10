@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, SetStateAction } from "react"
 import BookDate from "./bookDate";
 
 
-type GetDaysType = (year: number, month: number, x: number) => string[]
+type GetDaysType = (year: number, month: number, x: number) => Date[]
 
 const  getLastXDays: GetDaysType = (year, month, x) => {
   const lastDay = new Date(year, month + 1, 0).getDate();
   const dates = [];
 
   for (let day = lastDay - x + 1; day <= lastDay; day++) {
-    dates.push(new Date(year, month, day).toString());
+    dates.push(new Date(year, month, day));
   }
 
   return dates;
@@ -18,7 +18,7 @@ const  getLastXDays: GetDaysType = (year, month, x) => {
 const getFirstXDaysNextMonth: GetDaysType = (year, month, x) => {
   const dates = [];
   for (let day = 1; day <= x; day++) {
-    dates.push(new Date(year, month + 1, day).toString());
+    dates.push(new Date(year, month + 1, day));
   }
   return dates;
 }
@@ -44,18 +44,18 @@ const getCurrentMonth = () => {
     ])
     const now = new Date()
     const year = now.getFullYear()
-    const month = now.getMonth() + 2
+    const month = now.getMonth()
     const dates = []
 
 
     const daysInMonth = new Date(year, month + 1, 0).getDate()
 
     for (let day = 1; day <= daysInMonth; day++) {
-        dates.push(new Date(year, month, day).toString());
+        dates.push(new Date(year, month, day));
     }
 
-    const startDate = startMap.get(dates[0].split(" ")[0]) as number
-    const endDate = endMap.get(dates[dates.length - 1].split(" ")[0]) as number
+    const startDate = startMap.get(dates[0].toString().split(" ")[0]) as number
+    const endDate = endMap.get(dates[dates.length - 1].toString().split(" ")[0]) as number
     const startDays = getLastXDays(year, month - 1, startDate)
     const endDays = getFirstXDaysNextMonth(year, month, endDate)
 
@@ -64,8 +64,13 @@ const getCurrentMonth = () => {
     return finalDates
     
 }
-const BookCalendar: React.FC = () => {
-    const [ dates, setDates ] = useState<string[]>([])
+
+interface BookCalendarProps {
+    selectedDate: Date | null
+    setSelectedDate: React.Dispatch<SetStateAction<Date | null>>
+}
+const BookCalendar: React.FC<BookCalendarProps> = ({selectedDate, setSelectedDate}) => {
+    const [ dates, setDates ] = useState<Date[] | []>([])
     useEffect(() => {
         const data = getCurrentMonth()
         setDates(data)
@@ -83,9 +88,14 @@ const BookCalendar: React.FC = () => {
                     <p>S</p>
                 </div>
                 <div className="calendar-content">
-                    {dates.map(date => {
+                    {dates.map((date, i) => {
                         return(
-                            <BookDate date={date}/>
+                            <BookDate 
+                                date={date} 
+                                selectedDate={selectedDate}
+                                setSelectedDate={setSelectedDate}
+                                key={i}
+                            />
                         )
                     })}
                 </div>

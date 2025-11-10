@@ -1,15 +1,19 @@
 import BookInput from "./bookInput"
 
-const BookForm: React.FC = () => {
+interface BookFormProps {
+    selectedDate: Date | null
+    times: string[]
+}
+const BookForm: React.FC<BookFormProps> = ({selectedDate, times}) => {
     return(
         <>
             <div className="book-form">
                 <h1>Book Your Session</h1>
                 <div className="book-form-inputs">
-                    <BookInput label="Date" name="date"/>
-                    <BookInput label="Time" name="time"/>
-                    <BookInput label="Name" name="name"/>
-                    <BookInput label="Email" name="email"/>
+                    <BookInput label="Date" name="date" type="date" readonly={true} selectedDate={selectedDate}/>
+                    <BookInput label="Time" name="time" type="" select={true} times={times}/>
+                    <BookInput label="Name" name="name" type="text"/>
+                    <BookInput label="Email" name="email" type="text"/>
                 </div>
                 <p>*A $25 deposit is required to book an appointment</p>
                 <div className="book-form-footer">
