@@ -1,0 +1,11 @@
+.services-content{
+    background: url('../../images/servicesContent.svg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding-block: 5rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+}

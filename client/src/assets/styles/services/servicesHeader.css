@@ -1,0 +1,29 @@
+.services-header{
+    height: 20rem;
+    background: url('../../images/servicesHeader.png');
+    background-position: 50% 10%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-inline: clamp(1rem, 5%, 10rem);
+
+    & > h1{
+        font-family: var(--f-secondary);
+        color: var(--text-color-secondary);
+        font-size: 3rem;
+        font-weight: 500;
+    }
+    & > *{
+        position: relative;
+        z-index: 2;
+    }
+    &::after{
+        position: absolute;
+        content: '';
+        inset: 0;
+        background-color: black;
+        opacity: 25%;
+    }
+}

@@ -44,7 +44,8 @@ button{
   --background-primary: #F6BABB;
   --background-primary-offset: #f79697;
   --background-secondary: #EEF6F8;
-
+  --background-highlight: #FDFCE8;
+  
   --text-color-primary: #000000;
   --text-color-secondary: #FFFFFF;
   --text-color--highlight: #F6BABB;
