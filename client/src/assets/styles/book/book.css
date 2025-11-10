@@ -1,22 +1,13 @@
 @import './bookForm.css';
 @import './bookCalendar.css';
-.book-container{
+.book{
     position: relative;
     background: url('../../images/bookBackground.svg');
 
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    &::after{
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-color: black;
-        opacity: 35%;
-    }
-}
 
-.book{
     display: flex;
     justify-content: space-evenly;
     gap: 1rem;
@@ -24,6 +15,14 @@
     min-height: calc(100svh - 15rem);
     padding-top: 10rem;
     padding-bottom: 10rem;
+
+    &::after{
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-color: black;
+        opacity: 35%;
+    }
 }
 
 @media (max-width: 850px){

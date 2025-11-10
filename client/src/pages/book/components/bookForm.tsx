@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import BookInput from "./bookInput"
 
 interface BookFormProps {
@@ -7,9 +7,6 @@ interface BookFormProps {
 }
 const BookForm: React.FC<BookFormProps> = ({selectedDate, times}) => {
     const [ bookData, setBookData ] = useState<Record<string, any> | null>(null)
-    useEffect(() => {
-        console.log(bookData)
-    }, [bookData])
     return(
         <>
             <div className="book-form">

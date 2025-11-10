@@ -42,6 +42,7 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, re
                 <div className="book-input">
                     <label htmlFor={label}>{label}</label>
                     <select name={name} id={label} value={selectValue} onChange={(e) => setSelectValue(e.target.value)}>
+                        <option value="" disabled>Select a Time</option>
                         {times?.map((time, i) => {
                             return(
                                 <option value={time} key={i}>{time}</option>
