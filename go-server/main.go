@@ -8,9 +8,18 @@ import (
 	"github.com/joho/godotenv"
 	"go-server/middleware"
 	"go-server/controllers/auth"
-	// "go-server/middleware/verify"
+	"go-server/middleware/verify"
+	"go-server/controllers/csrf"
+	"go-server/controllers/nails"
 )
 
+
+func Chain(h http.Handler, middlewares ...func(http.Handler) http.Handler) http.Handler {
+	for i := len(middlewares) - 1; i >= 0; i-- {
+		h = middlewares[i](h)
+	}
+	return h
+}
 
 func main() {
 	_ = godotenv.Load()
@@ -23,6 +32,16 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/api/auth/public", auth.GetPublicAuthToken)
+
+	mux.Handle("/api/csrf", verify.VerifyPublicAuth(http.HandlerFunc(csrf.GetCsrfToken)))
+
+	mux.Handle("/api/nails", verify.VerifyCsrf(http.HandlerFunc(nails.GetNailInfo)))
+	handler := Chain(
+		mux,
+		middleware.LogginMiddleware,
+		middleware.CorsHandler.Handler,
+		middleware.BodyParser,
+	)
 	fmt.Printf("Server Running on %s\n", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), middleware.CorsHandler.Handler(middleware.BodyParser(mux))))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), handler))
 }
