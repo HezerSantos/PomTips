@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"go-server/middleware"
 	"go-server/controllers/auth"
+	// "go-server/middleware/verify"
 )
 
 
@@ -21,7 +22,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/api/auth/public", http.HandlerFunc(auth.GetPublicAuthToken))
+	mux.HandleFunc("/api/auth/public", auth.GetPublicAuthToken)
 	fmt.Printf("Server Running on %s\n", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), middleware.CorsHandler.Handler(middleware.BodyParser(mux))))
 }
