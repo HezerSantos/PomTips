@@ -5,6 +5,14 @@ import (
 	"net/http"
 	"time"
 )
+const (
+    Red    = "\033[31m"
+    Green  = "\033[32m"
+    Yellow = "\033[33m"
+    Blue   = "\033[34m"
+    Magenta = "\033[35m"
+    Reset  = "\033[0m"
+)
 
 type ResponseRecorder struct {
 	http.ResponseWriter
@@ -26,7 +34,7 @@ func LogginMiddleware (next http.Handler) http.Handler {
 		}
 
 
-		fmt.Printf("Request @ %s:\n", time.Now().Format("02 Jan 2006 03:04PM"))
+		fmt.Printf(Yellow + "Request @ %s:\n", time.Now().Format("02 Jan 2006 03:04PM") + Reset)
 		fmt.Printf("	Request Url: %s://%s%s\n", scheme, r.Host, r.URL.String())
 		fmt.Printf("	From: %s\n", r.Header.Get("Origin"))
 		fmt.Printf("	%s %s\n", r.Method, r.RequestURI)
@@ -37,7 +45,7 @@ func LogginMiddleware (next http.Handler) http.Handler {
 
 
 		duration := time.Since(start)
-		fmt.Printf("	Status: %d %dms", responseRecorder.statusCode, duration.Milliseconds())
+		fmt.Printf(Green+ "	Status: %d %dms" + Reset, responseRecorder.statusCode, duration.Milliseconds())
 		fmt.Println()
 	})
 }

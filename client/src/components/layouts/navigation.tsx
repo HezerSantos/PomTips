@@ -19,10 +19,10 @@ const Logo: React.FC = () => {
 const NavigationLinks: React.FC = () => {
     return(
         <div className="navigation-links">
-            <Link to={""}>
+            <Link to={"/"}>
                 Home
             </Link>
-            <Link to={""}>
+            <Link to={"/about"}>
                 About
             </Link>
             <Link to={"/services"}>

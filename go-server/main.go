@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
+	"go-server/controllers/auth"
+	"go-server/controllers/csrf"
+	"go-server/controllers/nails"
+	"go-server/middleware"
+	"go-server/middleware/verify"
+	"go-server/services/cloudflare"
+	"go-server/services/db"
 	"log"
 	"net/http"
 	"os"
+
 	"github.com/joho/godotenv"
-	"go-server/middleware"
-	"go-server/controllers/auth"
-	"go-server/middleware/verify"
-	"go-server/controllers/csrf"
-	"go-server/controllers/nails"
 )
 
 
@@ -29,13 +32,17 @@ func main() {
 		port = "8080"
 	}
 
+	db.Connect()
+	db.Migrate()
+	cloudflare.Connect()
+	
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/api/auth/public", auth.GetPublicAuthToken)
 
 	mux.Handle("/api/csrf", verify.VerifyPublicAuth(http.HandlerFunc(csrf.GetCsrfToken)))
 
-	mux.Handle("/api/nails", verify.VerifyCsrf(http.HandlerFunc(nails.GetNailInfo)))
+	mux.Handle("/api/nails", verify.VerifyCsrf(http.HandlerFunc(nails.NailInfo)))
 	handler := Chain(
 		mux,
 		middleware.LogginMiddleware,

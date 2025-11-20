@@ -46,7 +46,7 @@ func GetPublicAuthToken (w http.ResponseWriter, r *http.Request) {
 		Get(w, r)
 		return
 	}
-	helpers.SendError(w, r, 404, helpers.JsonError{Msg: "Method Not Found", Code: "INVALID_METHOD"})
+	helpers.SendMethodError(w, r)
 }
 
 
