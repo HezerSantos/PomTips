@@ -1,7 +1,5 @@
 import React, { RefObject, SetStateAction, UIEvent, useRef, useState } from "react"
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
-import nailInfo from "../helpers/nailInfo";
-
 
 interface NailCardProps {
     header: string
@@ -24,6 +22,23 @@ const NailCard: React.FC<NailCardProps> = ({header, price, imgUrl}) => {
         </>
     )
 }
+
+const NailCardLoading: React.FC = () => {
+    return(
+        <>
+            <div className="nail-card-loading">
+                <div>
+                    <p></p>
+                    <p></p>
+                </div>
+                <div>
+                    <div></div>
+                </div>
+            </div>
+        </>
+    )
+}
+
 
 
 type NailViewScrollButtonType = (
@@ -74,24 +89,45 @@ const NailViewScroll: React.FC<NailViewScrollProps> = ({nailContainer, percentSc
     )
 }
 
-const NailView: React.FC = () => {
+
+interface NailInfoType {
+    id: string
+    name: string
+    startingPrice: number
+    imageUrl: string
+}
+
+interface NailViewProps {
+    nailInfo: NailInfoType[] | null
+    isLoading: boolean
+}
+const NailView: React.FC<NailViewProps> = ({nailInfo, isLoading}) => {
     const nailContainer = useRef<HTMLDivElement | null>(null)
     const [ percentScrolled, setPercentScrolled ] = useState(0)
+    
     return (
         <>
             <section className="page-section">
                 <div className="page-section__child nail-view">
                     <div className="nail-view-content" ref={nailContainer} onScroll={(e) => nailScrollEvent(e, setPercentScrolled)}>
-                        {nailInfo.map(({header, price, imgUrl}, index) => {
-                            return (
-                                <NailCard 
-                                    header={header}
-                                    price={price}
-                                    imgUrl={imgUrl}
-                                    key={index}
-                                />
-                            )
-                        })}
+                        {!isLoading? (
+                            nailInfo?.map(({id, name, startingPrice, imageUrl}) => {
+                                return (
+                                    <NailCard 
+                                        header={name}
+                                        price={startingPrice}
+                                        imgUrl={imageUrl}
+                                        key={id}
+                                    />
+                                )
+                            })
+                        ) : (
+                            [...Array(5)].map((_, index) => {
+                                return(
+                                    <NailCardLoading key={index}/>
+                                )
+                            })
+                        )}
                     </div>
                     <NailViewScroll nailContainer={nailContainer} percentScrolled={percentScrolled}/>
                 </div>

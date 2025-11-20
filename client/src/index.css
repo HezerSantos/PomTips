@@ -50,6 +50,8 @@ button{
   --text-color-secondary: #FFFFFF;
   --text-color--highlight: #F6BABB;
   --text-color-offset: #6C181A;
+
+  --loading-animation: loading-animation 2s infinite ease-in;
 }
 
 .page-logo{
@@ -212,5 +214,17 @@ button{
   .footer{
     grid-template-columns: none;
 
+  }
+}
+
+@keyframes loading-animation {
+  0% {
+    opacity: 100%;
+  }
+  50%{
+    opacity: 0%;
+  }
+  100%{
+    opacity: 100%;
   }
 }

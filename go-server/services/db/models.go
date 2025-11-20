@@ -13,10 +13,10 @@ type Review struct {
 }
 
 type NailInfo struct {
-    ID           uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-    Name         string
-    StartingPrice int
-    ImageUrl     string
+    ID            uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+    Name          string     `json:"name"`
+    StartingPrice int        `json:"startingPrice"`
+    ImageUrl      string     `json:"imageUrl"`
 }
 
 type Appointment struct {
