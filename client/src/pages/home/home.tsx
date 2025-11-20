@@ -9,6 +9,8 @@ import Footer from "../../components/layouts/footer"
 import { useEffect, useState } from "react"
 import api from "../../app.config"
 import useGlobalContext from "../../customHooks/useGlobalContext"
+import handleApiError from "../../app.config.error"
+import { AxiosError } from "axios"
 
 interface NailInfoType {
     id: string
@@ -21,18 +23,28 @@ const Home: React.FC = () => {
     const [ isLoading, setIsLoading ] = useState(false)
     const globalContext = useGlobalContext()
     useEffect(() => {
-        const fetch = async() => {
+        const fetch = async(newCsrf?: string) => {
             setIsLoading(true)
             try{
                 const res = await api.get("/api/nails", {
                     headers: {
-                        csrftoken: globalContext.csrf?.csrfToken
+                        csrftoken: newCsrf? newCsrf : globalContext.csrf?.csrfToken
                     }
                 })
                 setNailInfo(res.data.nailInfo)
                 setIsLoading(false)
             } catch (e) {
-                console.error(e)
+                const axiosError = e as AxiosError
+                handleApiError({
+                    axiosError: axiosError,
+                    status: axiosError.status,
+                    globalContext: globalContext,
+                    callbacks: {
+                        handlePublicAuthRetry: () => fetch(),
+                        handleCsrfRetry: (newCsrf) => fetch(newCsrf)
+
+                    }
+                })
             }
         }
         fetch()

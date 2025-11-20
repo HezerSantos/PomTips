@@ -60,6 +60,7 @@ func VerifyCsrf(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("__Secure-auth.csrf")
 		if err != nil{
 			helpers.SendError(w, r, 403, helpers.JsonError{Msg: "Forbidden", Code: "INVALID_PERMISSIONS"})
+			return
 		}
 		cookieCsrfToken := cookie.Value
 
@@ -67,6 +68,7 @@ func VerifyCsrf(next http.Handler) http.Handler {
 
 		if err != nil {
 			helpers.SendError(w, r, 403, helpers.JsonError{Msg: "Forbidden", Code: "INVALID_PERMISSIONS"})
+			return
 		}
 
 		next.ServeHTTP(w, r)
