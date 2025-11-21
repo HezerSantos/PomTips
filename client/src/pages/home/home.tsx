@@ -11,6 +11,7 @@ import api from "../../app.config"
 import useGlobalContext from "../../customHooks/useGlobalContext"
 import handleApiError from "../../app.config.error"
 import { AxiosError } from "axios"
+import FadeInSection from "../../components/layouts/fadeInSection"
 
 interface NailInfoType {
     id: string
@@ -88,16 +89,23 @@ const Home: React.FC = () => {
 
         fetch()
     }, [])
-
     return(
         <>
             <Navigation />
             <HomeHeader />
             <main>
-                <ReviewInfo />
-                <NailView nailInfo={nailInfo} isLoading={isLoading}/>
-                <GeneralInfo />
-                <Reviews reviews={reviews}/>
+                <FadeInSection>
+                    <ReviewInfo />
+                </FadeInSection>
+                <FadeInSection>
+                    <NailView nailInfo={nailInfo} isLoading={isLoading}/>
+                </FadeInSection>
+                <FadeInSection>
+                    <GeneralInfo />
+                </FadeInSection>
+                <FadeInSection>
+                    <Reviews reviews={reviews}/>
+                </FadeInSection>
             </main>
             <Footer />
         </>
