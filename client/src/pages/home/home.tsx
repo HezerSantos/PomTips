@@ -32,7 +32,7 @@ const Home: React.FC = () => {
     const [ isLoading, setIsLoading ] = useState(false)
     const globalContext = useGlobalContext()
     useEffect(() => {
-        const fetch = async(newCsrf?: string) => {
+        const fetchNailInfo = async(newCsrf?: string) => {
             setIsLoading(true)
             try{
                 const nailInfoRes = await api.get("/api/nails", {
@@ -40,12 +40,31 @@ const Home: React.FC = () => {
                         csrftoken: newCsrf? newCsrf : globalContext.csrf?.csrfToken
                     }
                 })
+                setNailInfo(nailInfoRes.data.nailInfo)
+                setIsLoading(false)
+            } catch (e) {
+                const axiosError = e as AxiosError
+                handleApiError({
+                    axiosError: axiosError,
+                    status: axiosError.status,
+                    globalContext: globalContext,
+                    callbacks: {
+                        handlePublicAuthRetry: () => fetchNailInfo(),
+                        handleCsrfRetry: (newCsrf) => fetchNailInfo(newCsrf)
+
+                    }
+                })
+            }
+        }
+
+        const fetchReviews = async(newCsrf?: string) => {
+            setIsLoading(true)
+            try{
                 const reviewsRes = await api.get("/api/reviews", {
                     headers: {
                         csrftoken: newCsrf? newCsrf : globalContext.csrf?.csrfToken
                     }
                 })
-                setNailInfo(nailInfoRes.data.nailInfo)
                 setReviews(reviewsRes.data.reviews)
                 setIsLoading(false)
             } catch (e) {
@@ -55,13 +74,18 @@ const Home: React.FC = () => {
                     status: axiosError.status,
                     globalContext: globalContext,
                     callbacks: {
-                        handlePublicAuthRetry: () => fetch(),
-                        handleCsrfRetry: (newCsrf) => fetch(newCsrf)
+                        handlePublicAuthRetry: () => fetchReviews(),
+                        handleCsrfRetry: (newCsrf) => fetchReviews(newCsrf)
 
                     }
                 })
             }
         }
+        const fetch = async() => {
+            await fetchNailInfo()
+            await fetchReviews()
+        }
+
         fetch()
     }, [])
 

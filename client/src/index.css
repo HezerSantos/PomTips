@@ -61,22 +61,21 @@ button{
 
 .navigation{
   position: fixed;
-  z-index: 2;
+  z-index: 3;
   height: 5rem;
   padding-inline: clamp(1rem, 5%, 10rem);
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  /* background: url('./assets/images/headerBackground.svg');
-  background-position: center;
-  background-size: cover; */
   & * {
     align-self: center;
+    position: relative;
+    z-index: 2;
   }
 
   & > a {
     width: max-content;
     justify-self: self-end;
-    background-color: var(--background-primary);
+    background-color: var(--text-color-offset);
     color: white;
     padding: .8rem 1rem;
     border-radius: .5rem;
@@ -85,16 +84,18 @@ button{
       background-color: var(--background-primary-offset);
     }
   }
+
 }
 
 .navigation-logo{
+  width: max-content;
   & > a{
     display: flex;
     align-items: center;
     gap: 1rem;
 
     & > p{
-      color: var(--text-color-secondary);
+      color: var(--text-color-offset);
       font-size: 1.5rem;
     }
   }
@@ -107,14 +108,15 @@ button{
   width: 100%;
   display: flex;
   justify-content: space-evenly;
-
+  background-color: var(--text-color-offset);
+  border-radius: .8rem;
   & * {
     color: var(--text-color-secondary);
     position: relative;
     z-index: 1;
   }
 
-  &::after{
+  /* &::after{
     content: '';
     position: absolute;
     inset: 0;
@@ -122,7 +124,7 @@ button{
     backdrop-filter: blur(10px);           
     -webkit-backdrop-filter: blur(10px); 
     border-radius: .8rem;
-  }
+  } */
 
   & > a {
     padding: .5rem 2rem;

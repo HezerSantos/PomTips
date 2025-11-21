@@ -43,8 +43,8 @@ func main() {
 
 	mux.Handle("/api/csrf", verify.VerifyPublicAuth(http.HandlerFunc(csrf.GetCsrfToken)))
 
-	mux.Handle("/api/nails", verify.VerifyCsrf(http.HandlerFunc(nails.NailInfoHandler)))
-	mux.Handle("/api/reviews", verify.VerifyCsrf(http.HandlerFunc(reviews.ReviewsHandler)))
+	mux.Handle("/api/nails", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(nails.NailInfoHandler))))
+	mux.Handle("/api/reviews", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(reviews.ReviewsHandler))))
 	
 	handler := Chain(
 		mux,
