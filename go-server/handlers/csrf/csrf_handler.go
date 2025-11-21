@@ -3,18 +3,19 @@ package csrf
 import (
 	cRand "crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"go-server/helpers"
+	mRand "math/rand"
 	"net/http"
 	"os"
 	"time"
-	mRand "math/rand"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
 var CSRF_SECRET = []byte(os.Getenv("CSRF_SECRET"))
 
-
-func Get(w http.ResponseWriter, r *http.Request) {
+func GenerateCsrf() (*http.Cookie, error) {
 	domainEnv := os.Getenv("ENV")
 	if domainEnv == "production"{
 		domainEnv = ".hallowedvisions.com"
@@ -24,8 +25,8 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	b := make([]byte, 32)
 	_, err := cRand.Read(b)
 	if err != nil{
-		helpers.SendError(w, r, 500, helpers.JsonError{Msg: "Internal Server Error", Code: "INVALID_SERVER"})
-		return
+		// helpers.SendError(w, r, 500, helpers.JsonError{Msg: "Internal Server Error", Code: "INVALID_SERVER"})
+		return nil, fmt.Errorf("ERROR")
 	}
 	csrfValue := hex.EncodeToString(b)
 	claims := jwt.MapClaims{
@@ -37,7 +38,8 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(CSRF_SECRET)
 	if err != nil{
-		helpers.SendError(w, r, 500, helpers.JsonError{Msg: "Internal Server Error", Code: "INVALID_SERVER"})
+		// helpers.SendError(w, r, 500, helpers.JsonError{Msg: "Internal Server Error", Code: "INVALID_SERVER"})
+		return nil, fmt.Errorf("ERROR")
 	}
 
 	cookie := &http.Cookie{
@@ -50,6 +52,15 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		Domain: domainEnv,
 	}
 
+	return cookie, nil
+}
+
+func Get(w http.ResponseWriter, r *http.Request) {
+	cookie, err := GenerateCsrf()
+	if err != nil {
+		helpers.SendError(w, r, 500, helpers.JsonError{Msg: "Internal Server Error", Code: "INVALID_SERVER"})
+		return
+	}
 	http.SetCookie(w, cookie)
 }
 func GetCsrfToken(w http.ResponseWriter, r *http.Request) {

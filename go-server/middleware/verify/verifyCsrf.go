@@ -44,9 +44,9 @@ func validateCsrf(cookieCsrf string, headerCsrf string) (interface{}, error) {
 	key := (*claims)["key"].(float64)
 
 	csrfToken := transformCookie(csrf, key)
-	// fmt.Printf("Csrf: %s\n", csrfToken)
+	// fmt.Printf("	Cookie: %s\n", csrfToken)
 	// fmt.Println()
-	// fmt.Printf("Header: %s\n", headerCsrf)
+	// fmt.Printf("	Header: %s\n", headerCsrf)
 	if csrfToken == headerCsrf {
 		return nil, nil
 	}

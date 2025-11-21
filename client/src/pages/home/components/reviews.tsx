@@ -9,35 +9,6 @@ interface ReviewItemProps {
     stars: 1 | 2 | 3 | 4 | 5
 }
 
-
-const reviews = [
-    {
-        name: "Isabella Cruz",
-        text: "Absolutely obsessed! My Pom-inspired set turned out even better than I imagined — precise, comfy, and the staff made me feel pampered. I’ll be back every month.",
-        stars: 4
-    },
-    {
-        name: "Jasmine Lee",
-        text: "Loved the attention to detail. The shape and color were perfect, and they lasted way longer than I expected. Highly recommend booking ahead!",
-        stars: 5
-    },
-    {
-        name: "Emily Tran",
-        text: "Really good service and friendly atmosphere. Nails looked great, but I wish they had a few more color options available that day.",
-        stars: 4
-    },
-    {
-        name: "Sofia Hernandez",
-        text: "Such a relaxing experience — they really take their time and make sure you’re happy with the final result. Worth every penny.",
-        stars: 5
-    },
-    {
-        name: "Maya Patel",
-        text: "Clean salon, professional staff, and beautiful results. It’s hard to find consistent quality like this — definitely my new go-to spot.",
-        stars: 5
-    }
-]
-
 const ReviewItem: React.FC<ReviewItemProps> = ({name, text, stars}) => {
     const emptyStars = 5 - stars
     return(
@@ -74,7 +45,20 @@ const scrollLeft: ReviewScrollType = (reviewContainer) => {
     reviewContainer.current?.scrollBy({left: containerWidth, behavior: 'smooth'})
 }
 
-const Reviews: React.FC = () => {
+
+interface ReviewsType {
+    id: string,
+    firstName: string,
+    lastName: string,
+    rating: number,
+    review: string
+}
+
+interface ReviewsProps {
+    reviews: ReviewsType[] | null
+}
+
+const Reviews: React.FC<ReviewsProps> = ({reviews}) => {
     const reviewContainer = useRef<HTMLDivElement | null>(null)
     return(
         <>
@@ -92,13 +76,13 @@ const Reviews: React.FC = () => {
                         </button>
                     </div>
                     <div className='reviews-container' ref={reviewContainer}>
-                        {reviews.map(({name, text, stars}, index) => {
+                        {reviews?.map(({firstName, lastName, review, rating, id}) => {
                             return (
                                 <ReviewItem 
-                                    name={name}
-                                    text={text}
-                                    stars={stars as 1 | 2 | 3 | 4 | 5}
-                                    key={index}
+                                    name={`${firstName} ${lastName}`}
+                                    text={review}
+                                    stars={rating as 1 | 2 | 3 | 4 | 5}
+                                    key={id}
                                 />
                             )
                         })}

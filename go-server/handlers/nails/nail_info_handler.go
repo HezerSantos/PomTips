@@ -55,7 +55,7 @@ func Get(w http.ResponseWriter, r *http.Request) (interface{}, error){
 	return true, nil
 }	
 
-func NailInfo(w http.ResponseWriter, r *http.Request) {
+func NailInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET"{
 		_, err := Get(w, r)

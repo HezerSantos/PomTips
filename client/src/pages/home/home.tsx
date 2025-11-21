@@ -18,20 +18,35 @@ interface NailInfoType {
     startingPrice: number
     imageUrl: string
 }
+
+interface ReviewsType {
+    id: string,
+    firstName: string,
+    lastName: string,
+    rating: number,
+    review: string
+}
 const Home: React.FC = () => {
     const [ nailInfo, setNailInfo ] = useState<NailInfoType[] | null>(null)
+    const [ reviews, setReviews ] = useState<ReviewsType[] | null>(null)
     const [ isLoading, setIsLoading ] = useState(false)
     const globalContext = useGlobalContext()
     useEffect(() => {
         const fetch = async(newCsrf?: string) => {
             setIsLoading(true)
             try{
-                const res = await api.get("/api/nails", {
+                const nailInfoRes = await api.get("/api/nails", {
                     headers: {
                         csrftoken: newCsrf? newCsrf : globalContext.csrf?.csrfToken
                     }
                 })
-                setNailInfo(res.data.nailInfo)
+                const reviewsRes = await api.get("/api/reviews", {
+                    headers: {
+                        csrftoken: newCsrf? newCsrf : globalContext.csrf?.csrfToken
+                    }
+                })
+                setNailInfo(nailInfoRes.data.nailInfo)
+                setReviews(reviewsRes.data.reviews)
                 setIsLoading(false)
             } catch (e) {
                 const axiosError = e as AxiosError
@@ -58,7 +73,7 @@ const Home: React.FC = () => {
                 <ReviewInfo />
                 <NailView nailInfo={nailInfo} isLoading={isLoading}/>
                 <GeneralInfo />
-                <Reviews />
+                <Reviews reviews={reviews}/>
             </main>
             <Footer />
         </>

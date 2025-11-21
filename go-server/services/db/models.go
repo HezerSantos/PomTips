@@ -5,11 +5,11 @@ import (
 )
 
 type Review struct {
-    ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-    FirstName string
-    LastName  string
-    Rating    int
-    Review    string
+    ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+    FirstName string `json:"firstName"`
+    LastName  string `json:"lastName"`
+    Rating    int    `json:"rating"`
+    Review    string  `json:"review"`
 }
 
 type NailInfo struct {

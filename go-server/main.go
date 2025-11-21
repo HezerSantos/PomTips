@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"go-server/controllers/auth"
-	"go-server/controllers/csrf"
-	"go-server/controllers/nails"
+	"go-server/handlers/auth"
+	"go-server/handlers/csrf"
+	"go-server/handlers/nails"
+	"go-server/handlers/reviews"
 	"go-server/middleware"
 	"go-server/middleware/verify"
 	"go-server/services/cloudflare"
@@ -42,7 +43,9 @@ func main() {
 
 	mux.Handle("/api/csrf", verify.VerifyPublicAuth(http.HandlerFunc(csrf.GetCsrfToken)))
 
-	mux.Handle("/api/nails", verify.VerifyCsrf(http.HandlerFunc(nails.NailInfo)))
+	mux.Handle("/api/nails", verify.VerifyCsrf(http.HandlerFunc(nails.NailInfoHandler)))
+	mux.Handle("/api/reviews", verify.VerifyCsrf(http.HandlerFunc(reviews.ReviewsHandler)))
+	
 	handler := Chain(
 		mux,
 		middleware.LogginMiddleware,
