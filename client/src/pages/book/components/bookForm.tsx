@@ -1,4 +1,4 @@
-import React, { useState, SetStateAction } from "react"
+import React, { useState, SetStateAction, useEffect } from "react"
 import BookInput from "./bookInput"
 import api from "../../../app.config"
 import handleApiError from "../../../app.config.error"
@@ -22,6 +22,7 @@ interface ErrorType {
 
 type MakeAppointmentType = (
     bookData: Record<string, any> | null,
+    selectedFile: File | null,
     globalContext: GlobalContextType,
     setDateError: React.Dispatch<SetStateAction<ErrorType | null>>,
     setTimeError: React.Dispatch<SetStateAction<ErrorType | null>>,
@@ -30,30 +31,53 @@ type MakeAppointmentType = (
     setServiceError: React.Dispatch<SetStateAction<ErrorType | null>>,
     setAddOnError: React.Dispatch<SetStateAction<ErrorType | null>>,
     setUpgradeError: React.Dispatch<SetStateAction<ErrorType | null>>,
+    setFileError: React.Dispatch<SetStateAction<ErrorType | null>>,
     newCsrf?: string
 ) => Promise<void>
 
-const makeAppointment: MakeAppointmentType = async(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, newCsrf)=> {
+const makeAppointment: MakeAppointmentType = async(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError, newCsrf)=> {    
     try{
-        const res = await api.post("/api/appointments", {
-            bookData
-        }, 
+        const formData = new FormData()
+
+        if (bookData) {
+            Object.entries(bookData).forEach(([key, value]) => {
+                formData.append(key, value === null? "" : value)
+            })
+        }
+    
+        if (selectedFile) {
+            setFileError(null)
+            formData.append("refImage", selectedFile)
+        } else {
+            setFileError({msg: "Invalid Upload", isError: true})
+        }
+        await api.post("/api/appointments",
+            formData
+        , 
         {
             headers: {
                 csrftoken: newCsrf? newCsrf : globalContext.csrf?.csrfToken
             }
         })
-        console.log(res)
+        setDateError(null)
+        setTimeError(null)
+        setNameError(null)
+        setEmailError(null)
+        setServiceError(null)
+        setAddOnError(null)
+        setUpgradeError(null)
+        setFileError(null)
     } catch(e) {
         const axiosError = e as AxiosError
+        console.log(axiosError)
         handleApiError(
             {
                 axiosError: axiosError,
                 status: axiosError.status,
                 globalContext: globalContext,
                 callbacks: {
-                    handlePublicAuthRetry: () => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError),
-                    handleCsrfRetry: (newCsrf) => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, newCsrf)
+                    handlePublicAuthRetry: () => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError),
+                    handleCsrfRetry: (newCsrf) => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError, newCsrf)
                 },
                 setStateErrors: [
                     {
@@ -99,9 +123,13 @@ const BookForm: React.FC<BookFormProps> = ({selectedDate, times, baseServices, a
     const [ serviceError, setServiceError ] = useState<ErrorType | null>(null)
     const [ addOnError, setAddOnError ] = useState<ErrorType | null>(null)
     const [ upgradeError, setUpgradeError ] = useState<ErrorType | null>(null)
-    const globalContext = useGlobalContext()
+    const [ fileError, setFileError ] = useState<ErrorType | null>(null)
     const [ selectedFile, setSelectedFile ] = useState<File | null>(null)
+    const globalContext = useGlobalContext()
 
+    useEffect(() => {
+        console.log(fileError)
+    }, [setFileError])
     return(
         <>
             <div className="book-form">
@@ -114,11 +142,11 @@ const BookForm: React.FC<BookFormProps> = ({selectedDate, times, baseServices, a
                     <BookInput label="Service" name="service" type="" setBookData={setBookData} error={serviceError} select={true} options={baseServices} />
                     <BookInput label="Add On" name="addOn" type="" setBookData={setBookData} error={addOnError} select={true} options={addOns} />
                     <BookInput label="Upgrade" name="upgrade" type="" setBookData={setBookData} error={upgradeError} select={true} options={upgrades} />
-                    <BookFile selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
+                    <BookFile selectedFile={selectedFile} setSelectedFile={setSelectedFile} error={fileError}/>
                 </div>
                 <p>*A $25 deposit is required to book an appointment</p>
                 <div className="book-form-footer">
-                    <button onClick={() => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError)}>Book Session</button>
+                    <button onClick={() => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError)}>Book Session</button>
                     <p>*By clicking this you agree to our Terms</p>
                 </div>
             </div>

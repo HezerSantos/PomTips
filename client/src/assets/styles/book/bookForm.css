@@ -87,14 +87,17 @@
     color: var(--text-color-secondary);
     font-size: 1.2rem;
     cursor: pointer;
-    & > p{
+    & > p:nth-of-type(1){
         font-size: 1rem;
         border: 1px solid white;
-        height: calc(100% - 23px - 1px);
+        max-height: calc(100% - 23px - 1px);
         border-radius: .5rem;
         display: flex;
         align-items: center;
         padding: .35rem;
         font-style: italic;
+    }
+    & > p:nth-of-type(2){
+        font-size: 1rem
     }
 }

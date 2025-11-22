@@ -1,16 +1,17 @@
 package appointments
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"go-server/helpers"
 	"net/http"
-	"time"
 	"strings"
+	"time"
+
 	"github.com/go-playground/validator/v10"
 )
 
-type AppointmentJson struct{
+type AppointmentData struct{
 	Date string `json:"date" validate:"required,validateDate"`
 	Name string	`json:"name" validate:"required,min=1"`
 	Email string `json:"email" validate:"required,email"`
@@ -18,10 +19,6 @@ type AppointmentJson struct{
 	Service string `json:"service" validate:"required,validateService"`
 	AddOn string `json:"addOn" validate:"required,validateAddOn"`
 	Upgrade string `json:"upgrade" validate:"required,validateUpgrade"`
-}
-
-type BookDataWrapper struct {
-    BookData AppointmentJson `json:"bookData"`
 }
 
 func validateDate(fl validator.FieldLevel) bool {
@@ -100,12 +97,21 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 	validate.RegisterValidation("validateAddOn", validateAddOn)
 	validate.RegisterValidation("validateUpgrade", validateUpgrade)
 
-	var data BookDataWrapper
-	err := json.NewDecoder(r.Body).Decode(&data)
-	if err != nil {
-		helpers.SendNetworkError(w, r)
-		return
+	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
+	fileErr := r.ParseMultipartForm(10 << 20)
+
+	data := AppointmentData{
+		Date: r.FormValue("date"),
+		Name: r.FormValue("name"), 
+		Email: r.FormValue("email"), 
+		Time: r.FormValue("time"), 
+		Service: r.FormValue("service"), 
+		AddOn: r.FormValue("addOn"), 
+		Upgrade: r.FormValue("upgrade"), 
 	}
+
+
+
 
 	if err := validate.Struct(data); err != nil {
 		validationErrors := []helpers.ValidationError{}
@@ -113,8 +119,27 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 			validationError := helpers.ValidationError{Path: strings.ToLower(err.Field()), Msg: fmt.Sprintf("Invalid %s", err.Field())}
 			validationErrors = append(validationErrors, validationError)
 		}
+		if fileErr != nil {
+			validationError := helpers.ValidationError{Path: "refImage", Msg: "Invalid Upload"}
+			validationErrors = append(validationErrors, validationError)
+		}
 		helpers.SendError(w, r, 400, helpers.JsonError{Msg: "Invalid Body", Code: "INVALID_BODY", ValidationErrors: &validationErrors})
 		return
 	}
+
+	file, _, err := r.FormFile("refImage")
+
+
+	if err != nil {
+		validationErrors := []helpers.ValidationError{}
+		validationError := helpers.ValidationError{Path: "refImage", Msg: "Invalid Upload"}
+		validationErrors = append(validationErrors, validationError)
+		helpers.SendError(w, r, 400, helpers.JsonError{Msg: "Invalid Upload", Code: "INVALID_BODY", ValidationErrors: &validationErrors})
+		return
+	}
+	defer file.Close()
+
+	// buf := bytes.NewBuffer()
+	// if _, err := io.Copy(buf, file); err != nil { log.Fatal(err) }
 	w.Write([]byte("Hello"))
 }
