@@ -54,6 +54,13 @@ button{
   --loading-animation: loading-animation 2s infinite ease-in;
 }
 
+.input-error{
+  border: 1px solid rgb(255, 0, 0) !important;
+}
+.input-message-error{
+  color: red;
+}
+
 .page-logo{
   width: 4rem;
   height: 4rem;

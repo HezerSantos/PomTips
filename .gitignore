@@ -7,3 +7,4 @@ server/.env
 go-server/.env
 **/.env
 node_modules
+**/tmp/

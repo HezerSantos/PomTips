@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go-server/handlers/appointments"
 	"go-server/handlers/auth"
 	"go-server/handlers/csrf"
 	"go-server/handlers/nails"
@@ -45,7 +46,8 @@ func main() {
 
 	mux.Handle("/api/nails", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(nails.NailInfoHandler))))
 	mux.Handle("/api/reviews", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(reviews.ReviewsHandler))))
-	
+	mux.Handle("/api/appointments", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(appointments.AppointmentHandler))))
+
 	handler := Chain(
 		mux,
 		middleware.LogginMiddleware,

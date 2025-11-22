@@ -27,13 +27,15 @@ func generateUrl(nailInfo *db.NailInfo) (interface{}, error){
 	nailInfo.ImageUrl = presignResult.URL
 	return  nil, nil
 }
-func Get(w http.ResponseWriter, r *http.Request) (interface{}, error){
+func Get(w http.ResponseWriter, r *http.Request){
 	var nailInfoArray []*db.NailInfo
 
 	result := db.DB.Find(&nailInfoArray)
 
 	if result.Error != nil {
-		return nil, fmt.Errorf("DB ERROR")
+		fmt.Println("	DB ERROR")
+		helpers.SendNetworkError(w, r)
+		return
 	}
 
 	for _, nailInfo := range nailInfoArray {
@@ -41,7 +43,9 @@ func Get(w http.ResponseWriter, r *http.Request) (interface{}, error){
 		_, err := generateUrl(nailInfo)
 
 		if err != nil {
-			return nil, err
+			fmt.Println("	CLOUDFLARE ERROR")
+			helpers.SendNetworkError(w, r)
+			return
 		}
 	}
 
@@ -52,17 +56,12 @@ func Get(w http.ResponseWriter, r *http.Request) (interface{}, error){
 	data, _ := json.Marshal(jsonMap)
 
 	w.Write(data)
-	return true, nil
 }	
 
 func NailInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET"{
-		_, err := Get(w, r)
-		if err != nil {
-			fmt.Println("	CLOUDFLARE ERROR")
-			helpers.SendNetworkError(w, r)
-		}
+		Get(w, r)
 		return
 	}
 

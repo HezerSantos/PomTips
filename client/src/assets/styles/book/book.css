@@ -2,7 +2,7 @@
 @import './bookCalendar.css';
 .book{
     position: relative;
-    background: url('../../images/bookBackground.svg');
+    background: url('../../images/bookBackground.png');
 
     background-position: center;
     background-repeat: no-repeat;
@@ -10,6 +10,7 @@
 
     display: flex;
     justify-content: space-evenly;
+    align-items: center;
     gap: 1rem;
     padding-inline: clamp(1rem, 5vw, 10rem);
     min-height: calc(100svh - 15rem);
@@ -21,7 +22,7 @@
         position: absolute;
         inset: 0;
         background-color: black;
-        opacity: 35%;
+        opacity: 10%;
     }
 }
 

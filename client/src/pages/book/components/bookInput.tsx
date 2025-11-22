@@ -1,17 +1,22 @@
 import React, { SetStateAction, useEffect, useState } from "react"
+interface ErrorType {
+    msg: string,
+    isError: boolean
+}
 
 interface BookInputProps {
     label: string
     name: string
     type: string
     setBookData: React.Dispatch<SetStateAction<Record<string, any> | null>>
+    error?: ErrorType | null
     readonly?: boolean
     selectedDate?: Date | null
     select?: boolean
     times?: string[]
 }
 
-const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, readonly, selectedDate, select, times}) => {
+const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, error, readonly, selectedDate, select, times}) => {
     const date = selectedDate? selectedDate.toISOString().split('T')[0] : null
     const [value, setValue] = useState("")
     const [ selectValue, setSelectValue ] = useState("")
@@ -41,7 +46,7 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, re
             <>
                 <div className="book-input">
                     <label htmlFor={label}>{label}</label>
-                    <select name={name} id={label} value={selectValue} onChange={(e) => setSelectValue(e.target.value)}>
+                    <select name={name} id={label} value={selectValue} onChange={(e) => setSelectValue(e.target.value)} className={error?.isError? "input-error" : ""}>
                         <option value="" disabled>Select a Time</option>
                         {times?.map((time, i) => {
                             return(
@@ -49,6 +54,7 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, re
                             )
                         })}
                     </select>
+                    {error?.isError && <p className="input-message-error">*{error.msg}</p>}
                 </div>
             </>
         )
@@ -64,7 +70,9 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, re
                     readOnly={readonly} 
                     value={date? date : value}
                     onChange={date? undefined : (e) => setValue(e.target.value)}
+                    className={error?.isError? "input-error" : ""}
                 />
+                {error?.isError && <p className="input-message-error">*{error.msg}</p>}
             </div>
         </>
     )

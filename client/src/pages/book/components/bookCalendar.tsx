@@ -1,6 +1,6 @@
 import { useEffect, useState, SetStateAction } from "react"
 import BookDate from "./bookDate";
-
+import { FaRegCalendarAlt } from "react-icons/fa";
 
 type GetDaysType = (year: number, month: number, x: number) => Date[]
 
@@ -69,8 +69,15 @@ interface BookCalendarProps {
     selectedDate: Date | null
     setSelectedDate: React.Dispatch<SetStateAction<Date | null>>
 }
+
+const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
 const BookCalendar: React.FC<BookCalendarProps> = ({selectedDate, setSelectedDate}) => {
     const [ dates, setDates ] = useState<Date[] | []>([])
+    const currentDate = new Date()
     useEffect(() => {
         const data = getCurrentMonth()
         setDates(data)
@@ -79,13 +86,16 @@ const BookCalendar: React.FC<BookCalendarProps> = ({selectedDate, setSelectedDat
         <>
             <div className="book-calendar">
                 <div className="calendar-header">
-                    <p>S</p>
-                    <p>M</p>
-                    <p>T</p>
-                    <p>W</p>
-                    <p>TR</p>
-                    <p>F</p>
-                    <p>S</p>
+                    <span><p>{monthNames[currentDate.getMonth()]}</p><FaRegCalendarAlt /></span>
+                    <div>
+                        <p>S</p>
+                        <p>M</p>
+                        <p>T</p>
+                        <p>W</p>
+                        <p>TR</p>
+                        <p>F</p>
+                        <p>S</p>
+                    </div>
                 </div>
                 <div className="calendar-content">
                     {dates.map((date, i) => {

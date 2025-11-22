@@ -5,21 +5,20 @@ import (
 	"encoding/json"
 )
 
-
+type ValidationError struct{
+	Path string `json:"path"`
+	Msg string	`json:"msg"`
+}
 type JsonError struct {
-	Msg string
-	Code string
+	Msg string `json:"msg"`
+	Code string `json:"code"`
+	ValidationErrors *[]ValidationError `json:"validationErrors"`
 }
 func SendError (w http.ResponseWriter, r *http.Request, status int, jsonError JsonError){
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	jsonMap := map[string]interface{} {
-		"msg": jsonError.Msg,
-		"code": jsonError.Code,
-	}
-
-	data, _ := json.Marshal(jsonMap)
+	data, _ := json.Marshal(jsonError)
 
 	w.Write(data)
 }

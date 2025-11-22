@@ -5,14 +5,29 @@
 }
 
 .calendar-header{
-    padding-inline: 1rem;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    border: 2px transparent white;
-    & > *{
-        align-self: center;
-        justify-self: center;
+    & > span{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
         color: var(--text-color-secondary);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        & > svg{
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+    & > div {
+        padding-inline: 1rem;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        border: 2px transparent white;
+        & > *{
+            align-self: center;
+            justify-self: center;
+            color: var(--text-color-secondary);
+        }
     }
 }
 
