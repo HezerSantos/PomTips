@@ -13,10 +13,10 @@ interface BookInputProps {
     readonly?: boolean
     selectedDate?: Date | null
     select?: boolean
-    times?: string[]
+    options?: string[]
 }
 
-const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, error, readonly, selectedDate, select, times}) => {
+const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, error, readonly, selectedDate, select, options}) => {
     const date = selectedDate? selectedDate.toISOString().split('T')[0] : null
     const [value, setValue] = useState("")
     const [ selectValue, setSelectValue ] = useState("")
@@ -48,9 +48,9 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, er
                     <label htmlFor={label}>{label}</label>
                     <select name={name} id={label} value={selectValue} onChange={(e) => setSelectValue(e.target.value)} className={error?.isError? "input-error" : ""}>
                         <option value="" disabled>Select a Time</option>
-                        {times?.map((time, i) => {
+                        {options?.map((option, i) => {
                             return(
-                                <option value={time} key={i}>{time}</option>
+                                <option value={option} key={i}>{option}</option>
                             )
                         })}
                     </select>

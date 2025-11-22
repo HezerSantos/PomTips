@@ -4,10 +4,14 @@ import api from "../../../app.config"
 import handleApiError from "../../../app.config.error"
 import { AxiosError } from "axios"
 import useGlobalContext from "../../../customHooks/useGlobalContext"
+import BookFile from "./bookFile"
 
 interface BookFormProps {
     selectedDate: Date | null
     times: string[]
+    baseServices: string[]
+    addOns: string[]
+    upgrades: string[]
 }
 
 interface ErrorType {
@@ -23,10 +27,13 @@ type MakeAppointmentType = (
     setTimeError: React.Dispatch<SetStateAction<ErrorType | null>>,
     setNameError: React.Dispatch<SetStateAction<ErrorType | null>>,
     setEmailError: React.Dispatch<SetStateAction<ErrorType | null>>,
+    setServiceError: React.Dispatch<SetStateAction<ErrorType | null>>,
+    setAddOnError: React.Dispatch<SetStateAction<ErrorType | null>>,
+    setUpgradeError: React.Dispatch<SetStateAction<ErrorType | null>>,
     newCsrf?: string
 ) => Promise<void>
 
-const makeAppointment: MakeAppointmentType = async(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, newCsrf)=> {
+const makeAppointment: MakeAppointmentType = async(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, newCsrf)=> {
     try{
         const res = await api.post("/api/appointments", {
             bookData
@@ -39,15 +46,14 @@ const makeAppointment: MakeAppointmentType = async(bookData, globalContext, setD
         console.log(res)
     } catch(e) {
         const axiosError = e as AxiosError
-        console.log(axiosError)
         handleApiError(
             {
                 axiosError: axiosError,
                 status: axiosError.status,
                 globalContext: globalContext,
                 callbacks: {
-                    handlePublicAuthRetry: () => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError),
-                    handleCsrfRetry: (newCsrf) => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, newCsrf)
+                    handlePublicAuthRetry: () => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError),
+                    handleCsrfRetry: (newCsrf) => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, newCsrf)
                 },
                 setStateErrors: [
                     {
@@ -65,6 +71,18 @@ const makeAppointment: MakeAppointmentType = async(bookData, globalContext, setD
                     {
                         errorName: "email",
                         setState: setEmailError
+                    },
+                    {
+                        errorName: "service",
+                        setState: setServiceError
+                    },
+                    {
+                        errorName: "addon",
+                        setState: setAddOnError
+                    },
+                    {
+                        errorName: "upgrade",
+                        setState: setUpgradeError
                     }
                 ]
             }
@@ -72,14 +90,17 @@ const makeAppointment: MakeAppointmentType = async(bookData, globalContext, setD
     }
 }
 
-const BookForm: React.FC<BookFormProps> = ({selectedDate, times}) => {
+const BookForm: React.FC<BookFormProps> = ({selectedDate, times, baseServices, addOns, upgrades}) => {
     const [ bookData, setBookData ] = useState<Record<string, any> | null>(null)
     const [ dateError, setDateError ] = useState<ErrorType | null>(null)
     const [ timeError, setTimeError ] = useState<ErrorType | null>(null)
     const [ nameError, setNameError ] = useState<ErrorType | null>(null)
     const [ emailError, setEmailError ] = useState<ErrorType | null>(null)
-
+    const [ serviceError, setServiceError ] = useState<ErrorType | null>(null)
+    const [ addOnError, setAddOnError ] = useState<ErrorType | null>(null)
+    const [ upgradeError, setUpgradeError ] = useState<ErrorType | null>(null)
     const globalContext = useGlobalContext()
+    const [ selectedFile, setSelectedFile ] = useState<File | null>(null)
 
     return(
         <>
@@ -87,13 +108,17 @@ const BookForm: React.FC<BookFormProps> = ({selectedDate, times}) => {
                 <h1>Book Your Session</h1>
                 <div className="book-form-inputs">
                     <BookInput label="Date" name="date" type="date" setBookData={setBookData} error={dateError} readonly={true} selectedDate={selectedDate}/>
-                    <BookInput label="Time" name="time" type="" setBookData={setBookData} error={timeError} select={true} times={times}/>
+                    <BookInput label="Time" name="time" type="" setBookData={setBookData} error={timeError} select={true} options={times}/>
                     <BookInput label="Name" name="name" setBookData={setBookData} error={nameError} type="text"/>
                     <BookInput label="Email" name="email" setBookData={setBookData} error={emailError} type="text"/>
+                    <BookInput label="Service" name="service" type="" setBookData={setBookData} error={serviceError} select={true} options={baseServices} />
+                    <BookInput label="Add On" name="addOn" type="" setBookData={setBookData} error={addOnError} select={true} options={addOns} />
+                    <BookInput label="Upgrade" name="upgrade" type="" setBookData={setBookData} error={upgradeError} select={true} options={upgrades} />
+                    <BookFile selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
                 </div>
                 <p>*A $25 deposit is required to book an appointment</p>
                 <div className="book-form-footer">
-                    <button onClick={() => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError)}>Book Session</button>
+                    <button onClick={() => makeAppointment(bookData, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError)}>Book Session</button>
                     <p>*By clicking this you agree to our Terms</p>
                 </div>
             </div>

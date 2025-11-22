@@ -15,6 +15,9 @@ type AppointmentJson struct{
 	Name string	`json:"name" validate:"required,min=1"`
 	Email string `json:"email" validate:"required,email"`
 	Time string `json:"time" validate:"required,validateTime"`
+	Service string `json:"service" validate:"required,validateService"`
+	AddOn string `json:"addOn" validate:"required,validateAddOn"`
+	Upgrade string `json:"upgrade" validate:"required,validateUpgrade"`
 }
 
 type BookDataWrapper struct {
@@ -39,14 +42,66 @@ func validateTime(fl validator.FieldLevel) bool {
 	return ok
 }
 
+func validateService(fl validator.FieldLevel) bool {
+	servicesSet := map[string]struct{} {
+		"Acrylic Full Set": {},
+        "Acrylic Fill": {},
+        "Gel-X Full Set": {},
+        "Hard Gel Full Set": {},
+        "Dip Powder Full Set": {},
+        "Classic Manicure": {},
+        "Gel Manicure": {},
+        "Builder Gel (BIAB) Manicure": {},
+        "Regular Pedicure": {},
+        "Gel Pedicure": {},
+	}
+
+	_, ok := servicesSet[fl.Field().String()]
+
+	return ok
+}
+
+func validateAddOn(fl validator.FieldLevel) bool {
+	addOnsSet := map[string]struct{}{
+		"French Tips":         {},
+		"Simple Nail Art":     {},
+		"Advanced Nail Art":   {},
+		"Chrome":              {},
+		"Cat Eye":             {},
+		"Encapsulated Art":    {},
+		"Extra Long Length":   {},
+		"Shape Change":        {},
+		"Soak-Off Removal":    {},
+		"Nail Repair":         {},
+	}
+	_, ok := addOnsSet[fl.Field().String()]
+
+	return ok
+}
+
+func validateUpgrade(fl validator.FieldLevel) bool {
+	upgradesSet := map[string]struct{}{
+		"Gel Polish Upgrade":  {},
+		"Paraffin Treatment":  {},
+		"Deluxe Scrub":        {},
+		"Callus Removal":      {},
+	}
+	_, ok := upgradesSet[fl.Field().String()]
+
+	return ok
+}
+
 var validate = validator.New()
 
 func PostAppointments(w http.ResponseWriter, r *http.Request) {
 	validate.RegisterValidation("validateDate", validateDate)
 	validate.RegisterValidation("validateTime", validateTime)
+	validate.RegisterValidation("validateService", validateService)
+	validate.RegisterValidation("validateAddOn", validateAddOn)
+	validate.RegisterValidation("validateUpgrade", validateUpgrade)
+
 	var data BookDataWrapper
 	err := json.NewDecoder(r.Body).Decode(&data)
-
 	if err != nil {
 		helpers.SendNetworkError(w, r)
 		return
