@@ -10,15 +10,15 @@ interface BookInputProps {
     type: string
     bookData: Record<string,any> | null
     setBookData: React.Dispatch<SetStateAction<Record<string, any> | null>>
-    error?: ErrorType | null
     readonly?: boolean
     selectedDate?: Date | null
     select?: boolean
     options?: string[]
     defaultMsg?: string
+    refactoredErrors?: Map<string, ErrorType | null>
 }
 
-const BookInput: React.FC<BookInputProps> = ({label, name, type, bookData, setBookData, error, readonly, selectedDate, select, options, defaultMsg}) => {
+const BookInput: React.FC<BookInputProps> = ({label, name, type, bookData, setBookData, readonly, selectedDate, select, options, defaultMsg, refactoredErrors}) => {
     let date = selectedDate? selectedDate.toISOString().split('T')[0] : null
     const [value, setValue] = useState("")
     const [ selectValue, setSelectValue ] = useState("")
@@ -56,7 +56,7 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, bookData, setBo
             <>
                 <div className="book-input">
                     <label htmlFor={label}>{label}</label>
-                    <select name={name} id={label} value={selectValue} onChange={(e) => setSelectValue(e.target.value)} className={error?.isError? "input-error" : ""}>
+                    <select name={name} id={label} value={selectValue} onChange={(e) => setSelectValue(e.target.value)} className={refactoredErrors?.get(name)?.isError? "input-error": ""}>
                         <option value="" disabled>{defaultMsg}</option>
                         {options?.map((option, i) => {
                             return(
@@ -64,7 +64,7 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, bookData, setBo
                             )
                         })}
                     </select>
-                    {error?.isError && <p className="input-message-error">*{error.msg}</p>}
+                    {refactoredErrors?.get(name)?.isError && <p className="input-message-error">*{refactoredErrors?.get(name)?.msg}</p>}
                 </div>
             </>
         )
@@ -80,9 +80,10 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, bookData, setBo
                     readOnly={readonly} 
                     value={date? date : value}
                     onChange={date? undefined : (e) => setValue(e.target.value)}
-                    className={error?.isError? "input-error" : ""}
+                    // className={error?.isError? "input-error" : ""}
+                    className={refactoredErrors?.get(name)?.isError? "input-error": ""}
                 />
-                {error?.isError && <p className="input-message-error">*{error.msg}</p>}
+                {refactoredErrors?.get(name)?.isError && <p className="input-message-error">*{refactoredErrors?.get(name)?.msg}</p>}
             </div>
         </>
     )

@@ -20,7 +20,7 @@ type AppointmentData struct{
 	Email string `json:"email" validate:"required,email"`
 	Time string `json:"time" validate:"required,validateTime"`
 	Service string `json:"service" validate:"required,validateService"`
-	AddOn string `json:"addOn" validate:"required,validateAddOn"`
+	AddOn string `json:"addon" validate:"required,validateAddOn"`
 	Upgrade string `json:"upgrade" validate:"required,validateUpgrade"`
 }
 
@@ -108,7 +108,7 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		Email: r.FormValue("email"), 
 		Time: r.FormValue("time"), 
 		Service: r.FormValue("service"), 
-		AddOn: r.FormValue("addOn"), 
+		AddOn: r.FormValue("addon"), 
 		Upgrade: r.FormValue("upgrade"), 
 	}
 

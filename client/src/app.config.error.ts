@@ -18,6 +18,12 @@ interface SetStateErrorsType {
     errorName: string,
     setState: React.Dispatch<SetStateAction< ErrorType | null >> | undefined,
 }
+
+interface RefactoredErrorsType {
+    errorName: string,
+    setState: React.Dispatch<SetStateAction<Map<string, ErrorType | null>>>
+}
+
 type HandleApiErrorType =  (
     parameters: {
         axiosError: AxiosError,
@@ -25,6 +31,7 @@ type HandleApiErrorType =  (
         globalContext: GlobalContextType,
         callbacks: ApiCallbackType,
         setStateErrors?: SetStateErrorsType[],
+        refactoredErrors?: RefactoredErrorsType[]
         setFlashMessage?: React.Dispatch<SetStateAction<{error: boolean, ok: boolean}>>
 
     }
@@ -72,21 +79,22 @@ const handleApiError: HandleApiErrorType = async(parameters) => {
                             return [ error.path, error.msg]
                         })
                     )
-                    parameters.setStateErrors?.forEach(error => {
-                        if(bodyErrorMap.has(error.errorName)){
-                            const msg = bodyErrorMap.get(error.errorName)
-                            if(msg && error.setState){
-                                error.setState({
-                                    msg,
-                                    isError: true
-                                })
-                            }
-                        } else {
-                            if(error.setState){
-                                error.setState(null)
-                            }
-                        }
-                    })
+                    if(parameters.refactoredErrors) {
+                        parameters.refactoredErrors.forEach(({errorName, setState}) => {
+                            const msg = bodyErrorMap.get(errorName)
+                            setState(prev => {
+                                const newMap = new Map(prev)
+                                if (msg) {
+                                    newMap.set(errorName, {msg, isError: true})
+                                } else {
+                                    if (errorName != "file") {
+                                        newMap.set(errorName, null)
+                                    }
+                                }
+                                return newMap
+                            })
+                        })
+                    }
                     break
                 case "INVALID_QUERY":
                     break
