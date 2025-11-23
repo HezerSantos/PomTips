@@ -1,4 +1,4 @@
-import React, { useState, SetStateAction, useEffect } from "react"
+import React, { useState, SetStateAction } from "react"
 import BookInput from "./bookInput"
 import api from "../../../app.config"
 import handleApiError from "../../../app.config.error"
@@ -32,10 +32,12 @@ type MakeAppointmentType = (
     setAddOnError: React.Dispatch<SetStateAction<ErrorType | null>>,
     setUpgradeError: React.Dispatch<SetStateAction<ErrorType | null>>,
     setFileError: React.Dispatch<SetStateAction<ErrorType | null>>,
+    setBookData: React.Dispatch<SetStateAction<Record<string, any> | null>>,
+    setSelectedFile: React.Dispatch<SetStateAction<File | null>>,
     newCsrf?: string
 ) => Promise<void>
 
-const makeAppointment: MakeAppointmentType = async(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError, newCsrf)=> {    
+const makeAppointment: MakeAppointmentType = async(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError, setBookData, setSelectedFile, newCsrf)=> {    
     try{
         const formData = new FormData()
 
@@ -67,17 +69,18 @@ const makeAppointment: MakeAppointmentType = async(bookData, selectedFile, globa
         setAddOnError(null)
         setUpgradeError(null)
         setFileError(null)
+        setBookData(null)
+        setSelectedFile(null)
     } catch(e) {
         const axiosError = e as AxiosError
-        console.log(axiosError)
         handleApiError(
             {
                 axiosError: axiosError,
                 status: axiosError.status,
                 globalContext: globalContext,
                 callbacks: {
-                    handlePublicAuthRetry: () => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError),
-                    handleCsrfRetry: (newCsrf) => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError, newCsrf)
+                    handlePublicAuthRetry: () => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError, setBookData, setSelectedFile),
+                    handleCsrfRetry: (newCsrf) => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError, setBookData, setSelectedFile, newCsrf)
                 },
                 setStateErrors: [
                     {
@@ -127,26 +130,39 @@ const BookForm: React.FC<BookFormProps> = ({selectedDate, times, baseServices, a
     const [ selectedFile, setSelectedFile ] = useState<File | null>(null)
     const globalContext = useGlobalContext()
 
-    useEffect(() => {
-        console.log(fileError)
-    }, [setFileError])
     return(
         <>
             <div className="book-form">
                 <h1>Book Your Session</h1>
-                <div className="book-form-inputs">
-                    <BookInput label="Date" name="date" type="date" setBookData={setBookData} error={dateError} readonly={true} selectedDate={selectedDate}/>
-                    <BookInput label="Time" name="time" type="" setBookData={setBookData} error={timeError} select={true} options={times}/>
-                    <BookInput label="Name" name="name" setBookData={setBookData} error={nameError} type="text"/>
-                    <BookInput label="Email" name="email" setBookData={setBookData} error={emailError} type="text"/>
-                    <BookInput label="Service" name="service" type="" setBookData={setBookData} error={serviceError} select={true} options={baseServices} />
-                    <BookInput label="Add On" name="addOn" type="" setBookData={setBookData} error={addOnError} select={true} options={addOns} />
-                    <BookInput label="Upgrade" name="upgrade" type="" setBookData={setBookData} error={upgradeError} select={true} options={upgrades} />
+                <form className="book-form-inputs">
+                    <BookInput label="Date" name="date" type="date" bookData={bookData} setBookData={setBookData} error={dateError} readonly={true} selectedDate={selectedDate}/>
+                    <BookInput label="Time" name="time" type="" bookData={bookData} setBookData={setBookData} error={timeError} select={true} options={times} defaultMsg="Select a Time"/>
+                    <BookInput label="Name" name="name" bookData={bookData} setBookData={setBookData} error={nameError} type="text"/>
+                    <BookInput label="Email" name="email" bookData={bookData} setBookData={setBookData} error={emailError} type="text"/>
+                    <BookInput label="Service" name="service" type="" bookData={bookData} setBookData={setBookData} error={serviceError} select={true} options={baseServices} defaultMsg="Select a Service"/>
+                    <BookInput label="Add On" name="addOn" type="" bookData={bookData} setBookData={setBookData} error={addOnError} select={true} options={addOns} defaultMsg="Select an Addon"/>
+                    <BookInput label="Upgrade" name="upgrade" type="" bookData={bookData} setBookData={setBookData} error={upgradeError} select={true} options={upgrades} defaultMsg="Select an Upgrade"/>
                     <BookFile selectedFile={selectedFile} setSelectedFile={setSelectedFile} error={fileError}/>
-                </div>
+                </form>
                 <p>*A $25 deposit is required to book an appointment</p>
                 <div className="book-form-footer">
-                    <button onClick={() => makeAppointment(bookData, selectedFile, globalContext, setDateError, setTimeError, setNameError, setEmailError, setServiceError, setAddOnError, setUpgradeError, setFileError)}>Book Session</button>
+                    <button onClick={() => makeAppointment(
+                        bookData, 
+                        selectedFile, 
+                        globalContext, 
+                        setDateError, 
+                        setTimeError, 
+                        setNameError, 
+                        setEmailError, 
+                        setServiceError, 
+                        setAddOnError, 
+                        setUpgradeError, 
+                        setFileError, 
+                        setBookData,
+                        setSelectedFile
+                    )}>
+                            Book Session
+                    </button>
                     <p>*By clicking this you agree to our Terms</p>
                 </div>
             </div>

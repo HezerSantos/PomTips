@@ -83,21 +83,25 @@
     display: none;
 }
 
-.file-input-label{
-    color: var(--text-color-secondary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    & > p:nth-of-type(1){
-        font-size: 1rem;
-        border: 1px solid white;
-        max-height: calc(100% - 23px - 1px);
-        border-radius: .5rem;
-        display: flex;
-        align-items: center;
-        padding: .35rem;
-        font-style: italic;
+
+.file-input-content{
+    display: flex;
+    flex-direction: column;
+    & * {
+        cursor: pointer;
     }
-    & > p:nth-of-type(2){
-        font-size: 1rem
+    & > label:nth-of-type(1){
+        color: var(--text-color-secondary);
+        font-size: 1.2rem;
+    }
+    & > label:nth-of-type(2){
+        height: 35.19px;
+        font-size: 1rem;
+        padding: .35rem;
+        background-color: transparent;
+        color: var(--text-color-secondary);
+        border-radius: .5rem;
+        border: 1px solid white;
+        outline: none;
     }
 }

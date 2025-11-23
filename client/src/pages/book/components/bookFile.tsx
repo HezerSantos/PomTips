@@ -21,14 +21,12 @@ const BookFile: React.FC<BookFileProps> = ({selectedFile, setSelectedFile, error
 
     return(
         <>
-            <div>
+            <div className="file-input-content">
+                <label htmlFor="refImage">Upload</label>
                 <label htmlFor="refImage" className="file-input-label">
-                    Image
-                    <p className={error?.isError? "input-error" : ""}>
-                        <span>{selectedFile? transformName(selectedFile.name) : "Click to upload image"}</span>
-                    </p>
-                    {error?.isError && <p className="input-message-error">*{error.msg}</p>}
+                    {selectedFile? transformName(selectedFile.name) : "Click to upload image"}
                 </label>
+                {error?.isError && <p className="input-message-error">*{error.msg}</p>}
                 <input type="file" className="file-input" id="refImage" onChange={(e) => setSelectedFile(e.target.files?.length? e.target.files[0] : null)}/>
             </div>
         </>

@@ -1,15 +1,18 @@
 package cloudflare
 
-
 import (
-	"os"
 	"context"
 	"fmt"
+	"go-server/helpers"
+	"io"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"log"
 )
 
 
@@ -34,4 +37,20 @@ func Connect() {
 	})
 
 	PresignClient = s3.NewPresignClient(R2)
+}
+
+func StoreImage(bucketName string, key string, file io.Reader, contentType string, w http.ResponseWriter, r *http.Request) bool {
+	_, err := R2.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket: aws.String(bucketName),
+		Key: aws.String(key),
+		Body: file,
+		ContentType: aws.String(contentType),
+	})
+	fmt.Println(err)
+	if err != nil {
+		fmt.Println("	ERROR: Cloudflare Put Error")
+		helpers.SendNetworkError(w, r)
+		return false
+	}
+	return true
 }

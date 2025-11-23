@@ -8,16 +8,18 @@ interface BookInputProps {
     label: string
     name: string
     type: string
+    bookData: Record<string,any> | null
     setBookData: React.Dispatch<SetStateAction<Record<string, any> | null>>
     error?: ErrorType | null
     readonly?: boolean
     selectedDate?: Date | null
     select?: boolean
     options?: string[]
+    defaultMsg?: string
 }
 
-const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, error, readonly, selectedDate, select, options}) => {
-    const date = selectedDate? selectedDate.toISOString().split('T')[0] : null
+const BookInput: React.FC<BookInputProps> = ({label, name, type, bookData, setBookData, error, readonly, selectedDate, select, options, defaultMsg}) => {
+    let date = selectedDate? selectedDate.toISOString().split('T')[0] : null
     const [value, setValue] = useState("")
     const [ selectValue, setSelectValue ] = useState("")
     useEffect(() => {
@@ -41,13 +43,21 @@ const BookInput: React.FC<BookInputProps> = ({label, name, type, setBookData, er
             return newBookData
         })
     }, [date])
+
+    useEffect(() => {
+        if (bookData === null){
+            setValue("")
+            setSelectValue("")
+            date = null
+        }
+    }, [bookData])
     if (select){
         return (
             <>
                 <div className="book-input">
                     <label htmlFor={label}>{label}</label>
                     <select name={name} id={label} value={selectValue} onChange={(e) => setSelectValue(e.target.value)} className={error?.isError? "input-error" : ""}>
-                        <option value="" disabled>Select a Time</option>
+                        <option value="" disabled>{defaultMsg}</option>
                         {options?.map((option, i) => {
                             return(
                                 <option value={option} key={i}>{option}</option>

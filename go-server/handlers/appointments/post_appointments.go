@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"go-server/helpers"
+	"go-server/services/cloudflare"
+	"io"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/h2non/filetype"
 )
 
 type AppointmentData struct{
@@ -99,7 +102,6 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 
 	r.Body = http.MaxBytesReader(w, r.Body, 10<<20)
 	fileErr := r.ParseMultipartForm(10 << 20)
-
 	data := AppointmentData{
 		Date: r.FormValue("date"),
 		Name: r.FormValue("name"), 
@@ -127,7 +129,7 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, _, err := r.FormFile("refImage")
+	file, headers, err := r.FormFile("refImage")
 
 
 	if err != nil {
@@ -138,8 +140,37 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
+	
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, file); err != nil { 
+		fmt.Println("	Reading Error")
+		helpers.SendNetworkError(w, r)
+		return
+	}
+	fmt.Printf("Size Original: %d", buf.Len())
+	kind, ok := getMimeType(buf)
+	if !ok {
+		helpers.SendNetworkError(w, r)
+		return
+	}
 
-	// buf := bytes.NewBuffer()
-	// if _, err := io.Copy(buf, file); err != nil { log.Fatal(err) }
-	w.Write([]byte("Hello"))
+	ok = cloudflare.StoreImage("pomtips", fmt.Sprintf("NailInfo/%s", headers.Filename), buf, kind, w, r)
+
+	if !ok {
+		return
+	}
+	w.Write([]byte("Photo Sent"))
+}
+
+
+func getMimeType(buf *bytes.Buffer) (string, bool){
+	fixedBuf := buf.Bytes()[:261]
+
+	kind, err := filetype.Match(fixedBuf)
+
+	if err != nil {
+		return "", false
+	}
+
+	return kind.MIME.Value, true
 }
