@@ -55,7 +55,7 @@ const makeAppointment: MakeAppointmentType = async(bookData, selectedFile, globa
                 return newMap
             })
         }
-        await api.post("/api/appointments",
+        const res = await api.post("/api/appointments",
             formData
         , 
         {
@@ -72,6 +72,7 @@ const makeAppointment: MakeAppointmentType = async(bookData, selectedFile, globa
             }
             return newMap
         })
+        window.location.href = res.data.session.url
     } catch(e) {
         const axiosError = e as AxiosError
         handleApiError(

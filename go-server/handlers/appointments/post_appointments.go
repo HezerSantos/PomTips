@@ -2,9 +2,12 @@ package appointments
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"go-server/helpers"
-	"go-server/services/cloudflare"
+
+	// "go-server/services/cloudflare"
+	"go-server/services/stripe"
 	"io"
 	"net/http"
 	"strings"
@@ -129,7 +132,7 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, headers, err := r.FormFile("refImage")
+	file, _, err := r.FormFile("refImage")
 
 
 	if err != nil {
@@ -148,18 +151,46 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("Size Original: %d", buf.Len())
-	kind, ok := getMimeType(buf)
+	_, ok := getMimeType(buf)
 	if !ok {
 		helpers.SendNetworkError(w, r)
 		return
 	}
 
-	ok = cloudflare.StoreImage("pomtips", fmt.Sprintf("NailInfo/%s", headers.Filename), buf, kind, w, r)
+	// ok = cloudflare.StoreImage("pomtips", fmt.Sprintf("NailInfo/%s", headers.Filename), buf, kind, w, r)
+
+	// if !ok {
+	// 	return
+	// }
+
+	description := fmt.Sprintf(
+		"Appointment Data: %s • Time: %s • Name: %s • Email: %s • Service: %s • Addon: %s • Upgrade: %s",
+		data.Date, data.Time, data.Name, data.Email, data.Service, data.AddOn, data.Upgrade,
+	)
+
+	metaData := map[string]string{
+		"Date":    data.Date,
+		"Time":    data.Time,
+		"Name":    data.Name,
+		"Email":   data.Email,
+		"Service": data.Service,
+		"Addon":   data.AddOn,
+		"Upgrade": data.Upgrade,
+	}
+
+	session, ok := stripe.GenerateSession(w, r, description, &metaData)
 
 	if !ok {
 		return
 	}
-	w.Write([]byte("Photo Sent"))
+	jsonMap := map[string]interface{}{
+		"session": session,
+	}
+
+	output, _ := json.Marshal(jsonMap)
+
+
+	w.Write(output)
 }
 
 
