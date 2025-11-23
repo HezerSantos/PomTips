@@ -118,7 +118,7 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 	if err := validate.Struct(data); err != nil {
 		validationErrors := []helpers.ValidationError{}
 		for _, err := range err.(validator.ValidationErrors) {
-			validationError := helpers.ValidationError{Path: strings.ToLower(err.Field()), Msg: fmt.Sprintf("Invalid %s", err.Field())}
+			validationError := helpers.ValidationError{Path: strings.ToLower(err.Field()), Msg: fmt.Sprintf("Please provide a valid %s", err.Field())}
 			validationErrors = append(validationErrors, validationError)
 		}
 		if fileErr != nil {

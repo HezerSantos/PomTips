@@ -2,7 +2,7 @@
 @import './bookCalendar.css';
 .book{
     position: relative;
-    background: url('../../images/bookBackground.png');
+    background: url('../../images/bookBackground2.svg');
 
     background-position: center;
     background-repeat: no-repeat;
