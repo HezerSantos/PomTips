@@ -1,8 +1,18 @@
 package helpers
 
 import (
-	"net/http"
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"strings"
+)
+const (
+    Red    = "\033[31m"
+    Green  = "\033[32m"
+    Yellow = "\033[33m"
+    Blue   = "\033[34m"
+    Magenta = "\033[35m"
+    Reset  = "\033[0m"
 )
 
 type ValidationError struct{
@@ -23,7 +33,7 @@ func SendError (w http.ResponseWriter, r *http.Request, status int, jsonError Js
 	w.Write(data)
 }
 
-func SendNetworkError(w http.ResponseWriter, r *http.Request){
+func SendNetworkError(w http.ResponseWriter, r *http.Request, message string, err error){
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(500)
 	jsonMap := map[string]interface{}{
@@ -34,6 +44,11 @@ func SendNetworkError(w http.ResponseWriter, r *http.Request){
 	data, _ := json.Marshal(jsonMap)
 
 	w.Write(data)
+
+	indent := "    "
+	stack := strings.ReplaceAll(err.Error(), "\n", "\n"+indent)
+	fmt.Printf(Red + "	ERROR @ %s:\n", message + Reset)
+	fmt.Printf(Magenta + "	STACK TRACE @ %s:\n", stack  + Reset)
 }
 
 func SendMethodError(w http.ResponseWriter, r *http.Request){

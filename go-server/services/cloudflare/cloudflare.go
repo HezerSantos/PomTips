@@ -48,8 +48,7 @@ func StoreImage(bucketName string, key string, file io.Reader, contentType strin
 	})
 	fmt.Println(err)
 	if err != nil {
-		fmt.Println("	ERROR: Cloudflare Put Error")
-		helpers.SendNetworkError(w, r)
+		helpers.SendNetworkError(w, r, "CLOUDFLARE PUT ERROR", err)
 		return false
 	}
 	return true

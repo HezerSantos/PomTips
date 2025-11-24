@@ -4,8 +4,8 @@ import (
 	"go-server/helpers"
 	"net/http"
 	"os"
-	"github.com/stripe/stripe-go/v75"
-	"github.com/stripe/stripe-go/v75/checkout/session"
+	"github.com/stripe/stripe-go/v84"
+	"github.com/stripe/stripe-go/v84/checkout/session"
 )
 
 
@@ -38,7 +38,7 @@ func GenerateSession(w http.ResponseWriter, r *http.Request, description string,
 	s, err := session.New(params)
 
 	if err != nil {
-		helpers.SendNetworkError(w, r)
+		helpers.SendNetworkError(w, r, "STRIPE CHECKOUT SESSION ERROR", err)
 		return nil, false
 	}
 

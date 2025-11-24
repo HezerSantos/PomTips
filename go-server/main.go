@@ -7,6 +7,7 @@ import (
 	"go-server/handlers/csrf"
 	"go-server/handlers/nails"
 	"go-server/handlers/reviews"
+	"go-server/handlers/webhooks"
 	"go-server/middleware"
 	"go-server/middleware/verify"
 	"go-server/services/cloudflare"
@@ -48,6 +49,7 @@ func main() {
 	mux.Handle("/api/reviews", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(reviews.ReviewsHandler))))
 	mux.Handle("/api/appointments", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(appointments.AppointmentHandler))))
 
+	mux.Handle("/api/webhooks", http.HandlerFunc(webhooks.WebhookHandler))
 	handler := Chain(
 		mux,
 		middleware.LogginMiddleware,

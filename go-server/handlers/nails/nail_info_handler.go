@@ -33,8 +33,7 @@ func Get(w http.ResponseWriter, r *http.Request){
 	result := db.DB.Find(&nailInfoArray)
 
 	if result.Error != nil {
-		fmt.Println("	DB ERROR")
-		helpers.SendNetworkError(w, r)
+		helpers.SendNetworkError(w, r, "DATABASE ERROR", result.Error)
 		return
 	}
 
@@ -43,8 +42,7 @@ func Get(w http.ResponseWriter, r *http.Request){
 		_, err := generateUrl(nailInfo)
 
 		if err != nil {
-			fmt.Println("	CLOUDFLARE ERROR")
-			helpers.SendNetworkError(w, r)
+			helpers.SendNetworkError(w, r, "CLOUDFLARE ERROR", err)
 			return
 		}
 	}

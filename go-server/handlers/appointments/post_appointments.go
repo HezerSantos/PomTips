@@ -146,14 +146,13 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 	
 	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, file); err != nil { 
-		fmt.Println("	Reading Error")
-		helpers.SendNetworkError(w, r)
+		helpers.SendNetworkError(w, r, "FILE READING ERROR", err)
 		return
 	}
 	fmt.Printf("Size Original: %d", buf.Len())
 	_, ok := getMimeType(buf)
 	if !ok {
-		helpers.SendNetworkError(w, r)
+		helpers.SendNetworkError(w, r, "MIME READING ERROR", err)
 		return
 	}
 
