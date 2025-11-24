@@ -1,10 +1,10 @@
 package verify
 
-
 import (
+	"go-server/helpers"
 	"net/http"
 	"os"
-	"go-server/helpers"
+	"io"
 )
 
 var PUBLIC_AUTH_SECRET = os.Getenv("PUBLIC_AUTH_SECRET")
@@ -12,6 +12,7 @@ func VerifyPublicAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("__Secure-public-auth.access")
 		if err != nil {
+			io.Copy(io.Discard, r.Body)
 			helpers.SendError(w, r, 401, helpers.JsonError{Msg: "Unauthorized", Code: "INVALID_ENTRY_TOKEN"})
 			return
 		}
@@ -20,6 +21,7 @@ func VerifyPublicAuth(next http.Handler) http.Handler {
 		_, err = helpers.VerifyJWT(publicAuthToken, PUBLIC_AUTH_SECRET)
 
 		if err != nil {
+			io.Copy(io.Discard, r.Body)
 			helpers.SendError(w, r, 401, helpers.JsonError{Msg: "Unauthorized", Code: "INVALID_ENTRY_TOKEN"})
 			return
 		}

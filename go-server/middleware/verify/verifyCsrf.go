@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"io"
 )
 
 var CSRF_SECRET = os.Getenv("CSRF_SECRET")
@@ -59,6 +60,7 @@ func VerifyCsrf(next http.Handler) http.Handler {
 		headerCsrfToken := r.Header.Get("csrftoken")
 		cookie, err := r.Cookie("__Secure-auth.csrf")
 		if err != nil{
+			io.Copy(io.Discard, r.Body)
 			helpers.SendError(w, r, 403, helpers.JsonError{Msg: "Forbidden", Code: "INVALID_PERMISSIONS"})
 			return
 		}
@@ -67,10 +69,10 @@ func VerifyCsrf(next http.Handler) http.Handler {
 		_, err = validateCsrf(cookieCsrfToken, headerCsrfToken)
 
 		if err != nil {
+			io.Copy(io.Discard, r.Body)
 			helpers.SendError(w, r, 403, helpers.JsonError{Msg: "Forbidden", Code: "INVALID_PERMISSIONS"})
 			return
 		}
-
 		next.ServeHTTP(w, r)
 	})
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-server/helpers"
+	"os"
 
 	// "go-server/services/cloudflare"
 	"go-server/services/stripe"
@@ -117,7 +118,6 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 
 
 
-
 	if err := validate.Struct(data); err != nil {
 		validationErrors := []helpers.ValidationError{}
 		for _, err := range err.(validator.ValidationErrors) {
@@ -169,13 +169,14 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 	)
 
 	metaData := map[string]string{
-		"Date":    data.Date,
-		"Time":    data.Time,
-		"Name":    data.Name,
-		"Email":   data.Email,
-		"Service": data.Service,
-		"Addon":   data.AddOn,
-		"Upgrade": data.Upgrade,
+		"serverId": os.Getenv("SERVER_ID"),
+		"date":    data.Date,
+		"time":    data.Time,
+		"name":    data.Name,
+		"email":   data.Email,
+		"service": data.Service,
+		"addon":   data.AddOn,
+		"upgrade": data.Upgrade,
 	}
 
 	session, ok := stripe.GenerateSession(w, r, description, &metaData)
