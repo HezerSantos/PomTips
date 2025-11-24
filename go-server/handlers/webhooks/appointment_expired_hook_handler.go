@@ -1,22 +1,17 @@
 package webhooks
 
 import (
-	"encoding/json"
-	"fmt"
 	"go-server/helpers"
 	"io"
 	"net/http"
 	"os"
-
+	"fmt"
+	"encoding/json"
 	"github.com/stripe/stripe-go/v84"
 	"github.com/stripe/stripe-go/v84/webhook"
 )
-
-
-
-
-func WebhookHandler(w http.ResponseWriter, r *http.Request) {
-	WH_SECRET := os.Getenv("WH_SECRET")
+func AppointmentExpiredHookHandler(w http.ResponseWriter, r *http.Request) {
+	WH_SECRET := os.Getenv("WH_APPOINTMENT_EXPIRED_SECRET")
 	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
 	stripe.Key = os.Getenv("STRIPE_KEY")
 	payload, err := io.ReadAll(r.Body)
@@ -32,18 +27,18 @@ func WebhookHandler(w http.ResponseWriter, r *http.Request) {
 		helpers.SendNetworkError(w, r, "EVENT ERROR", err)
 		return
 	}
+	var session stripe.CheckoutSession
+	if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
+		fmt.Println("	JSON ERROR")
+		helpers.SendNetworkError(w, r, "JSON ERROR", err)
+		return
+	}
 
 	switch event.Type {
-	case "checkout.session.completed":
-		var session stripe.CheckoutSession
-		if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
-			fmt.Println("	JSON ERROR")
-			helpers.SendNetworkError(w, r, "JSON ERROR", err)
-			return
-		}
-		appointmentHook(w, r, session)
+	case "checkout.session.expired":
+		deleteAppointmentHook(w, r, session)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-
 }

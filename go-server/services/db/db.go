@@ -1,7 +1,9 @@
 package db
 
 import (
+	"fmt"
 	"os"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -10,6 +12,7 @@ import (
 var DB *gorm.DB
 
 func Connect() {
+    fmt.Println("   CONNECTING TO DATABASE...")
     dsn := os.Getenv("DATABASE_URL")
     if dsn == "" {
         panic("missing DATABASE_URL")
@@ -21,8 +24,11 @@ func Connect() {
     }
 
     DB = database
+    fmt.Println("   FINISHED CONNECTING TO DATABASE...")
 }
 
 func Migrate() {
-	DB.AutoMigrate(&Review{}, &NailInfo{}, &Appointment{})
+    fmt.Println("   MIGRATING DATABASE...")
+	DB.AutoMigrate(&Review{}, &NailInfo{}, &Appointment{}, &Images{})
+    fmt.Println("   FINISHED MIGRATING DATABASE...")
 }

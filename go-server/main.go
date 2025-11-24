@@ -49,7 +49,8 @@ func main() {
 	mux.Handle("/api/reviews", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(reviews.ReviewsHandler))))
 	mux.Handle("/api/appointments", verify.VerifyPublicAuth(verify.VerifyCsrf(http.HandlerFunc(appointments.AppointmentHandler))))
 
-	mux.Handle("/api/webhooks", http.HandlerFunc(webhooks.WebhookHandler))
+	mux.HandleFunc("/api/webhooks/appointments/created", webhooks.AppointmentCreatedHookHandler)
+		mux.HandleFunc("/api/webhooks/appointments/expired", webhooks.AppointmentExpiredHookHandler)
 	handler := Chain(
 		mux,
 		middleware.LogginMiddleware,

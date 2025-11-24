@@ -7,7 +7,7 @@ import (
 	"go-server/helpers"
 	"os"
 
-	// "go-server/services/cloudflare"
+	"go-server/services/cloudflare"
 	"go-server/services/stripe"
 	"io"
 	"net/http"
@@ -132,7 +132,7 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, _, err := r.FormFile("refImage")
+	file, headers, err := r.FormFile("refImage")
 
 
 	if err != nil {
@@ -150,17 +150,17 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Printf("Size Original: %d", buf.Len())
-	_, ok := getMimeType(buf)
+	kind, ok := getMimeType(buf)
 	if !ok {
 		helpers.SendNetworkError(w, r, "MIME READING ERROR", err)
 		return
 	}
 
-	// ok = cloudflare.StoreImage("pomtips", fmt.Sprintf("NailInfo/%s", headers.Filename), buf, kind, w, r)
+	ok = cloudflare.StoreImage("pomtips", fmt.Sprintf("NailInfo/%s", headers.Filename), buf, kind, w, r)
 
-	// if !ok {
-	// 	return
-	// }
+	if !ok {
+		return
+	}
 
 	description := fmt.Sprintf(
 		"Appointment Data: %s • Time: %s • Name: %s • Email: %s • Service: %s • Addon: %s • Upgrade: %s",
@@ -176,6 +176,7 @@ func PostAppointments(w http.ResponseWriter, r *http.Request) {
 		"service": data.Service,
 		"addon":   data.AddOn,
 		"upgrade": data.Upgrade,
+		"fileName": headers.Filename,
 	}
 
 	session, ok := stripe.GenerateSession(w, r, description, &metaData)

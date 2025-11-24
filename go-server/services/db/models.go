@@ -25,4 +25,16 @@ type Appointment struct {
     Email string
     Date  string
     Time  string
+    Service string 
+	AddOn string
+	Upgrade string
+
+    Image Images `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+}
+
+
+type Images struct {
+    ID uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+    AppointmentID uuid.UUID `gorm:"type:uuid;uniqueIndex"`
+    FileName string
 }

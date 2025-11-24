@@ -53,3 +53,17 @@ func StoreImage(bucketName string, key string, file io.Reader, contentType strin
 	}
 	return true
 }
+
+func DeleteImage(bucketName string, key string, fileName string, w http.ResponseWriter, r *http.Request) bool {
+	_, err := R2.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String(bucketName),
+		Key: aws.String(fmt.Sprintf("%s/%s", key, fileName)),
+	})
+
+	if err != nil {
+		helpers.SendNetworkError(w, r, "CLOUDFLARE DELETE OBJECT ERROR", err)
+		return false
+	}
+
+	return true
+}
